@@ -1,0 +1,95 @@
+* { box-sizing: border-box; }
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    color: $light;
+    background: $dark;
+    font-size: 17px;
+    font-family: "Inter", sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    margin: 0;
+}
+
+button {
+    font-family: "Inter";
+    border: none;
+    outline: none;
+    transition: 200ms;
+    cursor: pointer;
+}
+
+a {
+    color: $main;
+    font-family: "Inter";
+    text-decoration: none;
+    transition: 200ms;
+    cursor: pointer;
+
+    &:hover {
+        color: $second;
+    }
+}
+
+input, textarea {
+    font-family: "Inter";
+    outline: none;
+    transition: 200ms;
+}
+
+main {
+    min-height: calc(100vh - 90px);
+    padding: 20px;
+}
+
+// Not Found page
+.not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 90px);
+    padding: 10px;
+
+    .idk {
+        font-size: 100px;
+
+        @include W(768px) {
+            font-size: 20vw;
+        }
+    }
+
+    span {
+        display: block;
+        color: $light-50;
+        margin-top: 20px;
+        font-size: 20px;
+        text-align: center;
+    }
+}
+
+::selection {
+    background: $main-10;
+}
+
+// Scrollbar
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: $light-dark;
+}
+::-webkit-scrollbar-thumb {
+    background: $main;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: $second;
+}
