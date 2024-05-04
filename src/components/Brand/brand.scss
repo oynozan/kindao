@@ -1,0 +1,14 @@
+.brand {
+    font-size: 40px;
+    font-family: var(--poppins);
+    font-weight: 700;
+
+    span {
+        color: $light;
+        transition: 200ms;
+
+        &:hover {
+            color: $light-50;
+        }
+    }
+}

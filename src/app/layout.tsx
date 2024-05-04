@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Poppins } from "next/font/google";
+import { Toaster } from 'react-hot-toast';
 
-const inter = Inter({ subsets: ["latin"] });
+import Modals from "@/components/Modal/Modals";
+import Header from "@/components/Header";
+
+import '../styles/main.scss';
+
+const inter = Inter({ variable: "--inter", subsets: ["latin"] });
+const poppins = Poppins({ variable: "--poppins", weight: "400", subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "Kindao",
-    description: "Kindao",
+    description: "Fact Check DAO application",
 };
 
 export default function RootLayout({
@@ -15,7 +22,15 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en">
-            <body className={inter.className}>{children}</body>
+            <body className={`
+				${inter.variable}
+				${poppins.variable}
+			`}>
+                <Toaster position="top-center" />
+                <Modals />
+                <Header />
+                <main>{children}</main>
+            </body>
         </html>
     )
 }

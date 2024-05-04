@@ -11,7 +11,7 @@ body {
     color: $light;
     background: $dark;
     font-size: 17px;
-    font-family: "Inter", sans-serif;
+    font-family: var(--inter), sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6, p {
@@ -19,7 +19,7 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 button {
-    font-family: "Inter";
+    font-family: var(--inter);
     border: none;
     outline: none;
     transition: 200ms;
@@ -28,7 +28,7 @@ button {
 
 a {
     color: $main;
-    font-family: "Inter";
+    font-family: var(--inter);
     text-decoration: none;
     transition: 200ms;
     cursor: pointer;
@@ -39,7 +39,7 @@ a {
 }
 
 input, textarea {
-    font-family: "Inter";
+    font-family: var(--inter);
     outline: none;
     transition: 200ms;
 }
