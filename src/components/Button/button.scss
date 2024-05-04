@@ -1,0 +1,25 @@
+.button {
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 17px;
+
+    &.main {
+        background: $main;
+        border: 1px solid $second;
+        color: $light-dark;
+
+        &:hover {
+            background: $light-main;
+        }
+    }
+
+    &.light {
+        background: transparent;
+        color: $light;
+        border: 1px solid $border;
+
+        &:hover {
+            background: #ffffff10;
+        }
+    }
+}
