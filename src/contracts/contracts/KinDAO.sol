@@ -31,6 +31,7 @@ contract KinDAO is Ownable {
     }
 
     struct Proposal {
+        string id;
         string title;
         string description;
         address creator;
@@ -39,6 +40,7 @@ contract KinDAO is Ownable {
     }
 
     struct Fact {
+        string id;
         string proposalId;
         string title;
         string description;
@@ -51,18 +53,49 @@ contract KinDAO is Ownable {
 
     struct Vote {
         bool isUp;
+        string factId;
         address voter;
     }
 
-    event ProfileCreated(address indexed _address, string _username, string _avatarUrl);
+    event ProfileCreated(
+        address indexed _address,
+        string _username,
+        string _avatarUrl
+    );
 
-    event ProposalCreated(string _id, string _title, string _description, address _creator, uint128 _createdAt);
+    event ProposalCreated(
+        string _proposalId,
+        string _title,
+        string _description,
+        address _creator,
+        uint128 _createdAt
+    );
 
-    event FactCreated(string _id, string _proposalId, string _title, string _description, string _sourceMediaUrl, address _creator, uint128 _createdAt);
+    event FactCreated(
+        string _proposalId,
+        string _factId,
+        string _title,
+        string _description,
+        string _sourceMediaUrl,
+        address _creator,
+        uint128 _createdAt
+    );
 
-    event FactVoted(string _proposalId, string _factId, bool _isUp, uint256 _voteUp, uint256 _voteDown);
+    event FactVoted(
+        string _proposalId,
+        string _factId,
+        bool _isUp,
+        uint256 _voteUp,
+        uint256 _voteDown
+    );
 
-    event ProposalFinalized(string _id, string _title, string _description, address _creator, uint128 _createdAt);
+    event ProposalFinalized(
+        string _proposalId,
+        string _title,
+        string _description,
+        address _creator,
+        uint128 _createdAt
+    );
 
     constructor(address initialOwner, address _utilityToken) Ownable(initialOwner) {
         admins[initialOwner] = true;
@@ -147,7 +180,7 @@ contract KinDAO is Ownable {
         utilityToken.transferFrom(msg.sender, address(this), amount);
     
         string memory id = _createId("proposal");
-        proposals[id] = Proposal(_title, _description, msg.sender, uint128(block.timestamp), false);
+        proposals[id] = Proposal(id, _title, _description, msg.sender, uint128(block.timestamp), false);
         proposalIds.push(id);
 
         emit ProposalCreated(id, _title, _description, msg.sender, uint128(block.timestamp));
@@ -204,7 +237,7 @@ contract KinDAO is Ownable {
         require(!_addressIsCreatedFact(_facts, msg.sender), "You have already created a fact");
 
         string memory id = _createId("fact");
-        facts[_proposalId][id] = Fact(_proposalId, _title, _description, _sourceMediaUrl, 0, 0, uint128(block.timestamp), msg.sender);
+        facts[_proposalId][id] = Fact(id, _proposalId, _title, _description, _sourceMediaUrl, 0, 0, uint128(block.timestamp), msg.sender);
         factIds[_proposalId].push(id);
 
         emit FactCreated(_proposalId, id, _title, _description, _sourceMediaUrl, msg.sender, uint128(block.timestamp));
@@ -224,7 +257,7 @@ contract KinDAO is Ownable {
         if (vote.voter == address(0)) {
             voters[_factId].push(msg.sender);
             _isUp ? fact.voteUp += 1 : fact.voteDown += 1;
-            votes[_factId][msg.sender] = Vote(_isUp, msg.sender);
+            votes[_factId][msg.sender] = Vote(_isUp, _factId, msg.sender);
         } else {
             if (vote.isUp == _isUp) {
                 return;

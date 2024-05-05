@@ -84,7 +84,7 @@ describe("KinDAO", () => {
             const event = receipt.logs.find((e: EventLog | Log) => {
                 return (e as EventLog).eventName === 'ProposalCreated';
             }) as EventLog;
-    
+
             expect(event.args[3]).to.be.equal(propCreator.address);
 
             proposalId = event.args[0];
@@ -132,7 +132,7 @@ describe("KinDAO", () => {
         })
 
         it('Check upVote', async function () {
-            expect((await contract.getFact(proposalId, factId))[1][4]).to.be.equal(2);
+            expect((await contract.getFact(proposalId, factId))[1][5]).to.be.equal(2);
         })
 
         it('downVote', async function () {
@@ -145,7 +145,7 @@ describe("KinDAO", () => {
         it('Get proposal', async function () {
             const result = await contract.getProposal(proposalId);
             expect(result[0]).to.be.true;
-            const [title, desc, creator, timeStamp, isFinalized] = result[1];
+            const [id, title, desc, creator, timeStamp, isFinalized] = result[1];
             expect(title).to.be.equal('Prop Title');
             expect(desc).to.be.equal('Prop Desc');
             expect(creator).to.be.equal(propCreator.address);
@@ -157,6 +157,7 @@ describe("KinDAO", () => {
             const result = await contract.getFact(proposalId, factId);
             expect(result[0]).to.be.true;
             const [
+                id,
                 propId,
                 title,
                 desc,
@@ -180,6 +181,21 @@ describe("KinDAO", () => {
         it('Get vote', async function () {
             const result = await contract.getVote(factId, voter1.address);
             expect(result[1][0]).to.be.false;
+        })
+
+        it('Get proposals', async function () {
+            const result = await contract.getProposals();
+            expect(result.length).to.be.equal(1);
+        })
+
+        it('Get facts', async function () {
+            const result = await contract.getFacts(proposalId);
+            expect(result.length).to.be.equal(1);
+        })
+
+        it('Get votes', async function () {
+            const result = await contract.getVotes(factId);
+            expect(result.length).to.be.equal(2);
         })
     })
 });
