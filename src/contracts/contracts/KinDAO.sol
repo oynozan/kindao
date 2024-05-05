@@ -287,6 +287,10 @@ contract KinDAO is Ownable {
     function getFact(string memory _proposalId, string memory _factId) public view returns (bool, Fact memory) {
         return (_compareString(facts[_proposalId][_factId].title, ""), facts[_proposalId][_factId]);
     }
+
+    function getVote(string memory _factId, address _address) public view returns (bool, Vote memory) {
+        return (votes[_factId][_address].voter != address(0), votes[_factId][_address]);
+    }
     
     function withdraw() public onlyOwner {
         utilityToken.transferFrom(address(this), msg.sender, utilityToken.balanceOf(address(this)));

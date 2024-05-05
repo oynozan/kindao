@@ -176,5 +176,10 @@ describe("KinDAO", () => {
             expect(timeStamp).to.be.an('bigint');
             expect(creator).to.be.equal(factCreator.address);
         })
+
+        it('Get vote', async function () {
+            const result = await contract.getVote(factId, voter1.address);
+            expect(result[1][0]).to.be.false;
+        })
     })
 });
