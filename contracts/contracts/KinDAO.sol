@@ -8,7 +8,6 @@ contract KinDAO is Ownable {
     ERC20 public utilityToken;
 
     // Utility token amount
-    uint256 immutable proposalFee = 500;
     uint256 immutable providerFeeRate = 3;
     uint256 immutable firstFactCreatorFeeRate = 50;
     uint256 immutable secondFactCreatorFeeRate = 30;
@@ -35,6 +34,7 @@ contract KinDAO is Ownable {
         string title;
         string description;
         address creator;
+        uint256 bounty;
         uint128 createdAt;
         bool isFinalized;
     }
@@ -68,6 +68,7 @@ contract KinDAO is Ownable {
         string _title,
         string _description,
         address _creator,
+        uint256 _bounty,
         uint128 _createdAt
     );
 
@@ -144,10 +145,6 @@ contract KinDAO is Ownable {
         return keccak256(abi.encodePacked(a)) != keccak256(abi.encodePacked(b));
     }
 
-    function _calculateTokenAmount(uint256 _amount) internal view returns (uint256) {
-        return _amount * 10 ** utilityToken.decimals();
-    }
-
     function _createId(string memory seed) internal view returns (string memory) {
         uint256 length = 32;
         bytes memory characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -171,19 +168,18 @@ contract KinDAO is Ownable {
         emit ProfileCreated(msg.sender, _username, _avatarUrl);
     }
 
-    function createProposal(string memory _title, string memory _description) public {
-        uint256 amount = _calculateTokenAmount(proposalFee);
+    function createProposal(string memory _title, string memory _description, uint256 _bounty) public {
         uint256 allowance = utilityToken.allowance(msg.sender, address(this));
 
-        require(allowance >= amount, "Insufficient allowance");
+        require(allowance >= _bounty, "Insufficient allowance");
 
-        utilityToken.transferFrom(msg.sender, address(this), amount);
+        utilityToken.transferFrom(msg.sender, address(this), _bounty);
     
         string memory id = _createId("proposal");
-        proposals[id] = Proposal(id, _title, _description, msg.sender, uint128(block.timestamp), false);
+        proposals[id] = Proposal(id, _title, _description, msg.sender, _bounty, uint128(block.timestamp), false);
         proposalIds.push(id);
 
-        emit ProposalCreated(id, _title, _description, msg.sender, uint128(block.timestamp));
+        emit ProposalCreated(id, _title, _description, msg.sender, _bounty, uint128(block.timestamp));
     }
 
     function _checkProposal(string memory _proposalId) internal view {
@@ -191,10 +187,11 @@ contract KinDAO is Ownable {
     }
 
     function _payFactCreatorFees(string memory _proposalId, uint256 _totalPayValueToFactCreators) internal {
-        require(address(this).balance >= _totalPayValueToFactCreators, "Insufficient balance");
+        require(utilityToken.balanceOf(address(this)) >= _totalPayValueToFactCreators, "Insufficient balance");
 
         Fact[] memory _facts = getFacts(_proposalId);
-        for (uint256 i = 0; i < 3; i++) {
+        uint256 total = _facts.length < 3 ? _facts.length : 3;
+        for (uint256 i = 0; i < total; i++) {
             Fact memory fact = _facts[i];
             uint256 factCreatorFee = 0;
             if (i == 0) {
@@ -204,15 +201,15 @@ contract KinDAO is Ownable {
             } else if (i == 2) {
                 factCreatorFee = _totalPayValueToFactCreators * thirdFactCreatorFeeRate / 100;
             }
-            utilityToken.transferFrom(address(this), fact.creator, _calculateTokenAmount(factCreatorFee));
+            utilityToken.transfer(fact.creator, factCreatorFee);
         }
     }
 
     function finalizeProposal(string memory _proposalId) public onlyAdminOrCreator(_proposalId) {
         _checkProposal(_proposalId);
         Proposal storage proposal = proposals[_proposalId];
-        uint256 providerFee = proposalFee * providerFeeRate / 100;
-        uint256 totalPayValueToFactCreators = proposalFee - providerFee;
+        uint256 providerFee = proposal.bounty * providerFeeRate / 100;
+        uint256 totalPayValueToFactCreators = proposal.bounty - providerFee;
         _payFactCreatorFees(_proposalId, totalPayValueToFactCreators);
 
         proposal.isFinalized = true;
@@ -326,7 +323,7 @@ contract KinDAO is Ownable {
     }
     
     function withdraw() public onlyOwner {
-        utilityToken.transferFrom(address(this), msg.sender, utilityToken.balanceOf(address(this)));
+        utilityToken.transfer(msg.sender, utilityToken.balanceOf(address(this)));
     }
 
     receive() external payable {}
