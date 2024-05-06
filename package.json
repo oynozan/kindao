@@ -9,17 +9,29 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@multiplechain/tron": "^0.2.11",
+    "@tiptap/extension-hard-break": "^2.3.1",
+    "@tiptap/extension-placeholder": "^2.3.1",
+    "@tiptap/pm": "^2.3.1",
+    "@tiptap/react": "^2.3.1",
+    "@tiptap/starter-kit": "^2.3.1",
+    "chai": "^4.4.1",
     "next": "14.2.3",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-hot-toast": "^2.4.1",
+    "react-icons": "^5.2.0"
   },
   "devDependencies": {
+    "@tiptap/html": "^2.3.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
+    "isomorphic-dompurify": "^2.9.0",
     "sass": "^1.76.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "zustand": "^4.5.2"
   }
 }

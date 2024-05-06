@@ -2,14 +2,15 @@
     padding: 8px 20px;
     border-radius: 8px;
     font-size: 17px;
+    font-weight: 500;
 
     &.main {
         background: $main;
         border: 1px solid $second;
-        color: $light-dark;
+        color: $light;
 
         &:hover {
-            background: $light-main;
+            background: $second;
         }
     }
 
@@ -21,5 +22,10 @@
         &:hover {
             background: #ffffff10;
         }
+    }
+
+    &.blank {
+        background: transparent;
+        padding: 0;
     }
 }
