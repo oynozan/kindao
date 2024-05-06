@@ -16,15 +16,16 @@ contract KinDAO is Ownable {
     struct Totals {
         uint256 tokenAmount;
         uint256 proposal;
+        uint256 profile;
         uint256 fact;
         uint256 vote;
     }
 
     Totals public totals;
 
-    string[] private usernames;
     address[] private profileIds;
     string[] private proposalIds;
+    mapping(string => bool) private usernames;
     mapping(string => string[]) private factIds;
     mapping(string => address[]) private voters;
 
@@ -172,20 +173,25 @@ contract KinDAO is Ownable {
         return string(randomString);
     }
 
-    function _proileProcess(string memory _username, string memory _avatarUrl) internal {
+    function createProfile(string memory _username, string memory _avatarUrl) public {
         require(_compareString(_username, ""), "Username is required");
-        require(!_compareString(profiles[msg.sender].username, ""), "Username already exists");
+        require(usernames[_username] == false, "Username is already taken");
         profiles[msg.sender] = Profile(_username, _avatarUrl);
         profileIds.push(msg.sender);
-    }
-
-    function createProfile(string memory _username, string memory _avatarUrl) public {
-        _proileProcess(_username, _avatarUrl);
+        totals.profile += 1;
+        usernames[_username] = true;
         emit ProfileCreated(msg.sender, _username, _avatarUrl);
     }
 
     function updateProfile(string memory _username, string memory _avatarUrl) public {
-        _proileProcess(_username, _avatarUrl);
+        Profile storage profile = profiles[msg.sender];
+        if (_compareString(profile.username, _username)) {
+            require(usernames[_username] == false, "Username is already taken");
+            delete usernames[profile.username];
+            usernames[_username] = true;
+            profile.username = _username;
+        }
+        profile.avatarUrl = _avatarUrl;
     }
 
     function createProposal(string memory _title, string memory _description, uint256 _bounty) public {

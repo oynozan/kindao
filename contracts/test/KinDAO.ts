@@ -60,7 +60,13 @@ describe("KinDAO", () => {
 
         it('Create profile', async function () {
             await contract.connect(propCreator).createProfile('beycan', 'example');
+            await contract.connect(propCreator).updateProfile('deleted', 'example');
             expect((await contract.getProfile(propCreator.address))[0]).to.be.true;
+        })
+
+        it('Try username', async function () {
+            await contract.connect(voter1).createProfile('beycan', 'example');
+            expect((await contract.getProfile(voter1.address))[0]).to.be.true;
         })
 
         it('Get profiles', async function () {
@@ -242,8 +248,9 @@ describe("KinDAO", () => {
             const result = await contract.totals();
             expect(result[0]).to.be.equal(await tokenFormat(bounty));
             expect(result[1]).to.be.equal(1);
-            expect(result[2]).to.be.equal(5);
+            expect(result[2]).to.be.equal(2);
             expect(result[3]).to.be.equal(5);
+            expect(result[4]).to.be.equal(5);
         })
 
         it('Get facts with pagination', async function () {
