@@ -22,6 +22,7 @@ contract KinDAO is Ownable {
 
     Totals public totals;
 
+    string[] private usernames;
     address[] private profileIds;
     string[] private proposalIds;
     mapping(string => string[]) private factIds;
@@ -171,14 +172,20 @@ contract KinDAO is Ownable {
         return string(randomString);
     }
 
-    function createProfile(string memory _username, string memory _avatarUrl) public {
-        require(bytes(_username).length > 0, "Username is required");
-        require(bytes(_avatarUrl).length > 0, "Avatar URL is required");
-
+    function _proileProcess(string memory _username, string memory _avatarUrl) internal {
+        require(_compareString(_username, ""), "Username is required");
+        require(!_compareString(profiles[msg.sender].username, ""), "Username already exists");
         profiles[msg.sender] = Profile(_username, _avatarUrl);
         profileIds.push(msg.sender);
+    }
 
+    function createProfile(string memory _username, string memory _avatarUrl) public {
+        _proileProcess(_username, _avatarUrl);
         emit ProfileCreated(msg.sender, _username, _avatarUrl);
+    }
+
+    function updateProfile(string memory _username, string memory _avatarUrl) public {
+        _proileProcess(_username, _avatarUrl);
     }
 
     function createProposal(string memory _title, string memory _description, uint256 _bounty) public {
@@ -248,7 +255,7 @@ contract KinDAO is Ownable {
     function createFact(string memory _proposalId, string memory _title, string memory _description, string memory _sourceMediaUrl) public {
         _checkProposal(_proposalId);
 
-        Fact[] memory _facts = getFacts(_proposalId);
+        Fact[] memory _facts = getFacts(_proposalId, 0, factIds[_proposalId].length);
 
         require(!_addressIsCreatedFact(_facts, msg.sender), "You have already created a fact");
 
@@ -295,32 +302,54 @@ contract KinDAO is Ownable {
         emit FactVoted(_proposalId, _factId, _isUp, fact.voteUp, fact.voteDown);
     }
 
-    function getProfiles() public view returns (Profile[] memory) {
-        Profile[] memory _profiles = new Profile[](profileIds.length);
-        for (uint256 i = 0; i < profileIds.length; i++) {
-            _profiles[i] = profiles[profileIds[i]];
+    function getProfiles(uint256 _startIndex, uint256 _endIndex) public view returns (Profile[] memory) {
+        uint256 endIndex = _endIndex > profileIds.length ? profileIds.length : _endIndex;
+        uint256 startIndex = _startIndex > endIndex ? endIndex : _startIndex;
+        uint256 length = endIndex - startIndex;
+
+        Profile[] memory _profiles = new Profile[](length);
+
+        for (uint256 i = 0; i < length; i++) {
+            _profiles[i] = profiles[profileIds[startIndex + i]];
         }
+
         return _profiles;
     }
 
-    function getProposals() public view returns (Proposal[] memory) {
-        Proposal[] memory _proposals = new Proposal[](proposalIds.length);
-        for (uint256 i = 0; i < proposalIds.length; i++) {
-            _proposals[i] = proposals[proposalIds[i]];
+    function getProposals(uint256 _startIndex, uint256 _endIndex) public view returns (Proposal[] memory) {
+        uint256 endIndex = _endIndex > proposalIds.length ? proposalIds.length : _endIndex;
+        uint256 startIndex = _startIndex > endIndex ? endIndex : _startIndex;
+        uint256 length = endIndex - startIndex;
+    
+        Proposal[] memory _proposals = new Proposal[](length);
+
+        for (uint256 i = 0; i < length; i++) {
+            _proposals[i] = proposals[proposalIds[startIndex + i]];
         }
+
         return _proposals;
     }
 
-    function getFacts(string memory _proposalId) public view returns (Fact[] memory) {
-        Fact[] memory _facts = new Fact[](factIds[_proposalId].length);
-        for (uint256 i = 0; i < factIds[_proposalId].length; i++) {
-            _facts[i] = facts[_proposalId][factIds[_proposalId][i]];
+    function getFacts(string memory _proposalId, uint256 _startIndex, uint256 _endIndex) public view returns (Fact[] memory) {
+        uint256 endIndex = _endIndex > factIds[_proposalId].length ? factIds[_proposalId].length : _endIndex;
+        uint256 startIndex = _startIndex > endIndex ? endIndex : _startIndex;
+        uint256 length = endIndex - startIndex;
+
+        Fact[] memory _facts = new Fact[](length);
+
+        for (uint256 i = 0; i < length; i++) {
+            _facts[i] = facts[_proposalId][factIds[_proposalId][startIndex + i]];
         }
+
         return _facts;
     }
 
+    function getFactsLength(string memory _proposalId) public view returns (uint256) {
+        return factIds[_proposalId].length;
+    }
+
     function getDeservedFacts(string memory _proposalId) public view returns (Fact[] memory, uint256) {
-        Fact[] memory _facts = getFacts(_proposalId);
+        Fact[] memory _facts = getFacts(_proposalId, 0, factIds[_proposalId].length);
 
         for (uint256 i = 0; i < _facts.length - 1; i++) {
             for (uint256 f = 0; f < _facts.length - i - 1; f++) {

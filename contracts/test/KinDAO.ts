@@ -62,6 +62,11 @@ describe("KinDAO", () => {
             await contract.connect(propCreator).createProfile('beycan', 'example');
             expect((await contract.getProfile(propCreator.address))[0]).to.be.true;
         })
+
+        it('Get profiles', async function () {
+            const result = await contract.getProfiles(0, 1);
+            expect(result.length).to.be.equal(1);
+        })
     })
 
     describe('Proposal', function () {
@@ -207,12 +212,12 @@ describe("KinDAO", () => {
         })
 
         it('Get proposals', async function () {
-            const result = await contract.getProposals();
+            const result = await contract.getProposals(0, 1);
             expect(result.length).to.be.equal(1);
         })
 
         it('Get facts', async function () {
-            const result = await contract.getFacts(proposalId);
+            const result = await contract.getFacts(proposalId, 0, await contract.getFactsLength(proposalId));
             expect(result.length).to.be.equal(5);
         })
 
@@ -239,6 +244,11 @@ describe("KinDAO", () => {
             expect(result[1]).to.be.equal(1);
             expect(result[2]).to.be.equal(5);
             expect(result[3]).to.be.equal(5);
+        })
+
+        it('Get facts with pagination', async function () {
+            const result = await contract.getFacts(proposalId, 0, 2);
+            expect(result.length).to.be.equal(2);
         })
     })
 });
