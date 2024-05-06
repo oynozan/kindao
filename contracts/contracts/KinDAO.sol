@@ -8,14 +8,24 @@ contract KinDAO is Ownable {
     ERC20 public utilityToken;
 
     // Utility token amount
-    uint256 immutable proposalFee = 500;
     uint256 immutable providerFeeRate = 3;
     uint256 immutable firstFactCreatorFeeRate = 50;
     uint256 immutable secondFactCreatorFeeRate = 30;
     uint256 immutable thirdFactCreatorFeeRate = 20;
 
+    struct Totals {
+        uint256 tokenAmount;
+        uint256 proposal;
+        uint256 profile;
+        uint256 fact;
+        uint256 vote;
+    }
+
+    Totals public totals;
+
     address[] private profileIds;
     string[] private proposalIds;
+    mapping(string => bool) private usernames;
     mapping(string => string[]) private factIds;
     mapping(string => address[]) private voters;
 
@@ -35,6 +45,7 @@ contract KinDAO is Ownable {
         string title;
         string description;
         address creator;
+        uint256 bounty;
         uint128 createdAt;
         bool isFinalized;
     }
@@ -68,6 +79,7 @@ contract KinDAO is Ownable {
         string _title,
         string _description,
         address _creator,
+        uint256 _bounty,
         uint128 _createdAt
     );
 
@@ -100,6 +112,10 @@ contract KinDAO is Ownable {
     constructor(address initialOwner, address _utilityToken) Ownable(initialOwner) {
         admins[initialOwner] = true;
         utilityToken = ERC20(_utilityToken);
+        totals.tokenAmount = 0;
+        totals.proposal = 0;
+        totals.fact = 0;
+        totals.vote = 0;
     }
 
     function _onlyAdmin() internal view virtual {
@@ -144,10 +160,6 @@ contract KinDAO is Ownable {
         return keccak256(abi.encodePacked(a)) != keccak256(abi.encodePacked(b));
     }
 
-    function _calculateTokenAmount(uint256 _amount) internal view returns (uint256) {
-        return _amount * 10 ** utilityToken.decimals();
-    }
-
     function _createId(string memory seed) internal view returns (string memory) {
         uint256 length = 32;
         bytes memory characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -162,28 +174,40 @@ contract KinDAO is Ownable {
     }
 
     function createProfile(string memory _username, string memory _avatarUrl) public {
-        require(bytes(_username).length > 0, "Username is required");
-        require(bytes(_avatarUrl).length > 0, "Avatar URL is required");
-
+        require(_compareString(_username, ""), "Username is required");
+        require(usernames[_username] == false, "Username is already taken");
         profiles[msg.sender] = Profile(_username, _avatarUrl);
         profileIds.push(msg.sender);
-
+        totals.profile += 1;
+        usernames[_username] = true;
         emit ProfileCreated(msg.sender, _username, _avatarUrl);
     }
 
-    function createProposal(string memory _title, string memory _description) public {
-        uint256 amount = _calculateTokenAmount(proposalFee);
+    function updateProfile(string memory _username, string memory _avatarUrl) public {
+        Profile storage profile = profiles[msg.sender];
+        if (_compareString(profile.username, _username)) {
+            require(usernames[_username] == false, "Username is already taken");
+            delete usernames[profile.username];
+            usernames[_username] = true;
+            profile.username = _username;
+        }
+        profile.avatarUrl = _avatarUrl;
+    }
+
+    function createProposal(string memory _title, string memory _description, uint256 _bounty) public {
         uint256 allowance = utilityToken.allowance(msg.sender, address(this));
 
-        require(allowance >= amount, "Insufficient allowance");
+        require(allowance >= _bounty, "Insufficient allowance");
 
-        utilityToken.transferFrom(msg.sender, address(this), amount);
+        utilityToken.transferFrom(msg.sender, address(this), _bounty);
     
+        totals.proposal += 1;
+        totals.tokenAmount += _bounty;
         string memory id = _createId("proposal");
-        proposals[id] = Proposal(id, _title, _description, msg.sender, uint128(block.timestamp), false);
+        proposals[id] = Proposal(id, _title, _description, msg.sender, _bounty, uint128(block.timestamp), false);
         proposalIds.push(id);
 
-        emit ProposalCreated(id, _title, _description, msg.sender, uint128(block.timestamp));
+        emit ProposalCreated(id, _title, _description, msg.sender, _bounty, uint128(block.timestamp));
     }
 
     function _checkProposal(string memory _proposalId) internal view {
@@ -191,10 +215,14 @@ contract KinDAO is Ownable {
     }
 
     function _payFactCreatorFees(string memory _proposalId, uint256 _totalPayValueToFactCreators) internal {
-        require(address(this).balance >= _totalPayValueToFactCreators, "Insufficient balance");
+        require(utilityToken.balanceOf(address(this)) >= _totalPayValueToFactCreators, "Insufficient balance");
 
-        Fact[] memory _facts = getFacts(_proposalId);
-        for (uint256 i = 0; i < 3; i++) {
+        Fact[] memory _facts;
+        uint256 count;
+
+        (_facts, count) = getDeservedFacts(_proposalId);
+
+        for (uint256 i = 0; i < count; i++) {
             Fact memory fact = _facts[i];
             uint256 factCreatorFee = 0;
             if (i == 0) {
@@ -204,15 +232,16 @@ contract KinDAO is Ownable {
             } else if (i == 2) {
                 factCreatorFee = _totalPayValueToFactCreators * thirdFactCreatorFeeRate / 100;
             }
-            utilityToken.transferFrom(address(this), fact.creator, _calculateTokenAmount(factCreatorFee));
+
+            utilityToken.transfer(fact.creator, factCreatorFee);
         }
     }
 
     function finalizeProposal(string memory _proposalId) public onlyAdminOrCreator(_proposalId) {
         _checkProposal(_proposalId);
         Proposal storage proposal = proposals[_proposalId];
-        uint256 providerFee = proposalFee * providerFeeRate / 100;
-        uint256 totalPayValueToFactCreators = proposalFee - providerFee;
+        uint256 providerFee = proposal.bounty * providerFeeRate / 100;
+        uint256 totalPayValueToFactCreators = proposal.bounty - providerFee;
         _payFactCreatorFees(_proposalId, totalPayValueToFactCreators);
 
         proposal.isFinalized = true;
@@ -232,10 +261,11 @@ contract KinDAO is Ownable {
     function createFact(string memory _proposalId, string memory _title, string memory _description, string memory _sourceMediaUrl) public {
         _checkProposal(_proposalId);
 
-        Fact[] memory _facts = getFacts(_proposalId);
+        Fact[] memory _facts = getFacts(_proposalId, 0, factIds[_proposalId].length);
 
         require(!_addressIsCreatedFact(_facts, msg.sender), "You have already created a fact");
 
+        totals.fact += 1;
         string memory id = _createId("fact");
         facts[_proposalId][id] = Fact(id, _proposalId, _title, _description, _sourceMediaUrl, 0, 0, uint128(block.timestamp), msg.sender);
         factIds[_proposalId].push(id);
@@ -255,6 +285,7 @@ contract KinDAO is Ownable {
         Vote storage vote = votes[_factId][msg.sender];
         
         if (vote.voter == address(0)) {
+            totals.vote += 1;
             voters[_factId].push(msg.sender);
             _isUp ? fact.voteUp += 1 : fact.voteDown += 1;
             votes[_factId][msg.sender] = Vote(_isUp, _factId, msg.sender);
@@ -277,28 +308,73 @@ contract KinDAO is Ownable {
         emit FactVoted(_proposalId, _factId, _isUp, fact.voteUp, fact.voteDown);
     }
 
-    function getProfiles() public view returns (Profile[] memory) {
-        Profile[] memory _profiles = new Profile[](profileIds.length);
-        for (uint256 i = 0; i < profileIds.length; i++) {
-            _profiles[i] = profiles[profileIds[i]];
+    function getProfiles(uint256 _startIndex, uint256 _endIndex) public view returns (Profile[] memory) {
+        uint256 endIndex = _endIndex > profileIds.length ? profileIds.length : _endIndex;
+        uint256 startIndex = _startIndex > endIndex ? endIndex : _startIndex;
+        uint256 length = endIndex - startIndex;
+
+        Profile[] memory _profiles = new Profile[](length);
+
+        for (uint256 i = 0; i < length; i++) {
+            _profiles[i] = profiles[profileIds[startIndex + i]];
         }
+
         return _profiles;
     }
 
-    function getProposals() public view returns (Proposal[] memory) {
-        Proposal[] memory _proposals = new Proposal[](proposalIds.length);
-        for (uint256 i = 0; i < proposalIds.length; i++) {
-            _proposals[i] = proposals[proposalIds[i]];
+    function getProposals(uint256 _startIndex, uint256 _endIndex) public view returns (Proposal[] memory) {
+        uint256 endIndex = _endIndex > proposalIds.length ? proposalIds.length : _endIndex;
+        uint256 startIndex = _startIndex > endIndex ? endIndex : _startIndex;
+        uint256 length = endIndex - startIndex;
+    
+        Proposal[] memory _proposals = new Proposal[](length);
+
+        for (uint256 i = 0; i < length; i++) {
+            _proposals[i] = proposals[proposalIds[startIndex + i]];
         }
+
         return _proposals;
     }
 
-    function getFacts(string memory _proposalId) public view returns (Fact[] memory) {
-        Fact[] memory _facts = new Fact[](factIds[_proposalId].length);
-        for (uint256 i = 0; i < factIds[_proposalId].length; i++) {
-            _facts[i] = facts[_proposalId][factIds[_proposalId][i]];
+    function getFacts(string memory _proposalId, uint256 _startIndex, uint256 _endIndex) public view returns (Fact[] memory) {
+        uint256 endIndex = _endIndex > factIds[_proposalId].length ? factIds[_proposalId].length : _endIndex;
+        uint256 startIndex = _startIndex > endIndex ? endIndex : _startIndex;
+        uint256 length = endIndex - startIndex;
+
+        Fact[] memory _facts = new Fact[](length);
+
+        for (uint256 i = 0; i < length; i++) {
+            _facts[i] = facts[_proposalId][factIds[_proposalId][startIndex + i]];
         }
+
         return _facts;
+    }
+
+    function getFactsLength(string memory _proposalId) public view returns (uint256) {
+        return factIds[_proposalId].length;
+    }
+
+    function getDeservedFacts(string memory _proposalId) public view returns (Fact[] memory, uint256) {
+        Fact[] memory _facts = getFacts(_proposalId, 0, factIds[_proposalId].length);
+
+        for (uint256 i = 0; i < _facts.length - 1; i++) {
+            for (uint256 f = 0; f < _facts.length - i - 1; f++) {
+                if (_facts[f].voteUp < _facts[f + 1].voteUp) {
+                    Fact memory temp = _facts[f];
+                    _facts[f] = _facts[f + 1];
+                    _facts[f + 1] = temp;
+                }
+            }
+        }
+
+        uint256 count = _facts.length < 3 ? _facts.length : 3;
+        Fact[] memory _deservedFacts = new Fact[](count);
+
+        for (uint256 i = 0; i < count; i++) {
+            _deservedFacts[i] = _facts[i];
+        }
+
+        return (_deservedFacts, count);
     }
 
     function getVotes(string memory _factId) public view returns (Vote[] memory) {
@@ -326,7 +402,7 @@ contract KinDAO is Ownable {
     }
     
     function withdraw() public onlyOwner {
-        utilityToken.transferFrom(address(this), msg.sender, utilityToken.balanceOf(address(this)));
+        utilityToken.transfer(msg.sender, utilityToken.balanceOf(address(this)));
     }
 
     receive() external payable {}
