@@ -13,6 +13,15 @@ contract KinDAO is Ownable {
     uint256 immutable secondFactCreatorFeeRate = 30;
     uint256 immutable thirdFactCreatorFeeRate = 20;
 
+    struct Totals {
+        uint256 tokenAmount;
+        uint256 proposal;
+        uint256 fact;
+        uint256 vote;
+    }
+
+    Totals public totals;
+
     address[] private profileIds;
     string[] private proposalIds;
     mapping(string => string[]) private factIds;
@@ -101,6 +110,10 @@ contract KinDAO is Ownable {
     constructor(address initialOwner, address _utilityToken) Ownable(initialOwner) {
         admins[initialOwner] = true;
         utilityToken = ERC20(_utilityToken);
+        totals.tokenAmount = 0;
+        totals.proposal = 0;
+        totals.fact = 0;
+        totals.vote = 0;
     }
 
     function _onlyAdmin() internal view virtual {
@@ -175,6 +188,8 @@ contract KinDAO is Ownable {
 
         utilityToken.transferFrom(msg.sender, address(this), _bounty);
     
+        totals.proposal += 1;
+        totals.tokenAmount += _bounty;
         string memory id = _createId("proposal");
         proposals[id] = Proposal(id, _title, _description, msg.sender, _bounty, uint128(block.timestamp), false);
         proposalIds.push(id);
@@ -189,9 +204,12 @@ contract KinDAO is Ownable {
     function _payFactCreatorFees(string memory _proposalId, uint256 _totalPayValueToFactCreators) internal {
         require(utilityToken.balanceOf(address(this)) >= _totalPayValueToFactCreators, "Insufficient balance");
 
-        Fact[] memory _facts = getFacts(_proposalId);
-        uint256 total = _facts.length < 3 ? _facts.length : 3;
-        for (uint256 i = 0; i < total; i++) {
+        Fact[] memory _facts;
+        uint256 count;
+
+        (_facts, count) = getDeservedFacts(_proposalId);
+
+        for (uint256 i = 0; i < count; i++) {
             Fact memory fact = _facts[i];
             uint256 factCreatorFee = 0;
             if (i == 0) {
@@ -201,6 +219,7 @@ contract KinDAO is Ownable {
             } else if (i == 2) {
                 factCreatorFee = _totalPayValueToFactCreators * thirdFactCreatorFeeRate / 100;
             }
+
             utilityToken.transfer(fact.creator, factCreatorFee);
         }
     }
@@ -233,6 +252,7 @@ contract KinDAO is Ownable {
 
         require(!_addressIsCreatedFact(_facts, msg.sender), "You have already created a fact");
 
+        totals.fact += 1;
         string memory id = _createId("fact");
         facts[_proposalId][id] = Fact(id, _proposalId, _title, _description, _sourceMediaUrl, 0, 0, uint128(block.timestamp), msg.sender);
         factIds[_proposalId].push(id);
@@ -252,6 +272,7 @@ contract KinDAO is Ownable {
         Vote storage vote = votes[_factId][msg.sender];
         
         if (vote.voter == address(0)) {
+            totals.vote += 1;
             voters[_factId].push(msg.sender);
             _isUp ? fact.voteUp += 1 : fact.voteDown += 1;
             votes[_factId][msg.sender] = Vote(_isUp, _factId, msg.sender);
@@ -296,6 +317,29 @@ contract KinDAO is Ownable {
             _facts[i] = facts[_proposalId][factIds[_proposalId][i]];
         }
         return _facts;
+    }
+
+    function getDeservedFacts(string memory _proposalId) public view returns (Fact[] memory, uint256) {
+        Fact[] memory _facts = getFacts(_proposalId);
+
+        for (uint256 i = 0; i < _facts.length - 1; i++) {
+            for (uint256 f = 0; f < _facts.length - i - 1; f++) {
+                if (_facts[f].voteUp < _facts[f + 1].voteUp) {
+                    Fact memory temp = _facts[f];
+                    _facts[f] = _facts[f + 1];
+                    _facts[f + 1] = temp;
+                }
+            }
+        }
+
+        uint256 count = _facts.length < 3 ? _facts.length : 3;
+        Fact[] memory _deservedFacts = new Fact[](count);
+
+        for (uint256 i = 0; i < count; i++) {
+            _deservedFacts[i] = _facts[i];
+        }
+
+        return (_deservedFacts, count);
     }
 
     function getVotes(string memory _factId) public view returns (Vote[] memory) {

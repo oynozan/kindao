@@ -17,7 +17,7 @@ describe("KinDAO", () => {
     let contract: KinDAO;
     let tokenAddress: string;
     let proposalId: string
-    let factId: string
+    let factIds: string[] = [];
 
     let factCreator1: Signer, factCreator2: Signer, factCreator3: Signer, factCreator4: Signer, factCreator5: Signer;
 
@@ -101,10 +101,10 @@ describe("KinDAO", () => {
     })
 
     describe('Fact', function () {
-        const createFact = async (creator: Signer) => {
+        const createFact = async (creator: Signer, title: string) => {
             const tx = await contract.connect(creator).createFact(
                 proposalId,
-                'Fact Title',
+                title,
                 'Fact Desc',
                 'https://example.com'
             );
@@ -121,37 +121,40 @@ describe("KinDAO", () => {
 
             expect(event.args[0]).to.be.equal(proposalId);
 
-            factId = event.args[1];
+            factIds.push(event.args[1]);
 
-            expect((await contract.getFact(proposalId, factId))[0]).to.be.true;
+            expect((await contract.getFact(proposalId, factIds[0]))[0]).to.be.true;
         }
         it('Create fact', async function () {
-            await createFact(factCreator1);
-            await createFact(factCreator2);
-            await createFact(factCreator3);
-            await createFact(factCreator4);
-            await createFact(factCreator5);
+            await createFact(factCreator1, 'Fact Title 1');
+            await createFact(factCreator2, 'Fact Title 2');
+            await createFact(factCreator3, 'Fact Title 3');
+            await createFact(factCreator4, 'Fact Title 4');
+            await createFact(factCreator5, 'Fact Title 5');
         })
     })
 
     describe('Vote', function () {
         it('Vote', async function () {
-            expect((await contract.getVotes(factId)).length).to.be.equal(0);
+            expect((await contract.getVotes(factIds[0])).length).to.be.equal(0);
         })
 
         it('VoteFact', async function () {
-            await (await contract.connect(voter1).voteFact(proposalId, factId, true)).wait();
-            await (await contract.connect(voter2).voteFact(proposalId, factId, true)).wait();
-            expect((await contract.getVotes(factId)).length).to.be.equal(2);
+            await (await contract.connect(voter1).voteFact(proposalId, factIds[0], true)).wait();
+            await (await contract.connect(voter2).voteFact(proposalId, factIds[0], true)).wait();
+            await (await contract.connect(voter1).voteFact(proposalId, factIds[2], true)).wait();
+            await (await contract.connect(voter2).voteFact(proposalId, factIds[2], true)).wait();
+            await (await contract.connect(voter1).voteFact(proposalId, factIds[1], false)).wait();
+            expect((await contract.getVotes(factIds[0])).length).to.be.equal(2);
         })
 
         it('Check upVote', async function () {
-            expect((await contract.getFact(proposalId, factId))[1][5]).to.be.equal(2);
+            expect((await contract.getFact(proposalId, factIds[0]))[1][5]).to.be.equal(2);
         })
 
         it('downVote', async function () {
-            await (await contract.connect(voter1).voteFact(proposalId, factId, false)).wait();
-            expect((await contract.getVotes(factId))[0][0]).to.be.false;
+            await (await contract.connect(voter1).voteFact(proposalId, factIds[0], false)).wait();
+            expect((await contract.getVotes(factIds[0]))[0][0]).to.be.false;
         })
 
         it('Finalize proposal', async function () {
@@ -174,7 +177,7 @@ describe("KinDAO", () => {
         })
 
         it('Get fact', async function () {
-            const result = await contract.getFact(proposalId, factId);
+            const result = await contract.getFact(proposalId, factIds[0]);
             expect(result[0]).to.be.true;
             const [
                 id,
@@ -189,17 +192,17 @@ describe("KinDAO", () => {
             ] = result[1];
 
             expect(propId).to.be.equal(proposalId);
-            expect(title).to.be.equal('Fact Title');
+            expect(title).to.be.equal('Fact Title 1');
             expect(desc).to.be.equal('Fact Desc');
             expect(url).to.be.equal('https://example.com');
             expect(upVote).to.be.equal(1);
             expect(downVote).to.be.equal(1);
             expect(timeStamp).to.be.an('bigint');
-            expect(creator).to.be.equal(factCreator5.address);
+            expect(creator).to.be.equal(factCreator1.address);
         })
 
         it('Get vote', async function () {
-            const result = await contract.getVote(factId, voter1.address);
+            const result = await contract.getVote(factIds[0], voter1.address);
             expect(result[1][0]).to.be.false;
         })
 
@@ -214,12 +217,28 @@ describe("KinDAO", () => {
         })
 
         it('Get votes', async function () {
-            const result = await contract.getVotes(factId);
+            const result = await contract.getVotes(factIds[0]);
             expect(result.length).to.be.equal(2);
         })
 
         it('Check balance', async function () {
             expect(await token.balanceOf(contract.getAddress())).to.be.equal(await tokenFormat(15));
+        })
+
+        it('Get deserved facts', async function () {
+            const result = await contract.getDeservedFacts(proposalId);
+            expect(result[0][0][5]).to.be.equal(2);
+            expect(result[0][1][5]).to.be.equal(1);
+            expect(result[0][2][5]).to.be.equal(0);
+            expect(result[0][2][6]).to.be.equal(1);
+        })
+
+        it('Get totals', async function () {
+            const result = await contract.totals();
+            expect(result[0]).to.be.equal(await tokenFormat(bounty));
+            expect(result[1]).to.be.equal(1);
+            expect(result[2]).to.be.equal(5);
+            expect(result[3]).to.be.equal(5);
         })
     })
 });
