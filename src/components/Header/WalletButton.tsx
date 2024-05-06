@@ -1,10 +1,21 @@
 'use client'
 
-import { browser, Provider } from '@multiplechain/tron';
+import * as TronDefault from '@/lib/tron/index.es.js'
+import type * as TronType from '@/lib/tron/browser/index'
+import type { WalletAdapterInterface } from '@multiplechain/types'
+
+// @ts-expect-error everything is fine
+const { Provider, browser } = TronDefault as typeof TronType
 
 import Button from "../Button";
 import { useModalStore } from "@/lib/states";
 import { useEffect } from 'react';
+
+declare global {
+    interface Window {
+        connectAdapter: (adapter: WalletAdapterInterface) => Promise<string>;
+    }
+}
 
 export default function WalletButton() {
 
@@ -20,30 +31,20 @@ export default function WalletButton() {
         })
     }
 
-    /*useEffect(() => {
+    useEffect(() => {
         // Tron window variable declaration for browser
-        (window as any).Tron = browser;
-
         const provider = new Provider({
             testnet: true
         });
 
-        (window as any).adapters = {};
-        (window as any).connectAdapter = async (adapter: any) => {
-            if (adapter.disconnect) {
-                await adapter.disconnect()
-            }
-
-            const wallet = new browser.Wallet(adapter)
-            const adapterProvider = await wallet.connect(provider, {
-                projectId: ''
+        window.connectAdapter = async (adapter: WalletAdapterInterface): Promise<string> => {
+            const wallet = new browser.Wallet(adapter, provider)
+            return await wallet.connect(provider, {
+                projectId: '113d9f5689edd84ff230c2a6d679c80c'
             })
         };
 
-        let adapters = browser.adapters;
-
-        console.log(adapters);
-    }, []);*/
+    }, []);
 
     return (
         <Button

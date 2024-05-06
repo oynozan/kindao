@@ -9,7 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@multiplechain/tron": "^0.2.11",
+    "@multiplechain/types": "^0.1.55",
+    "@multiplechain/utils": "^0.1.18",
     "@tiptap/extension-hard-break": "^2.3.1",
     "@tiptap/extension-placeholder": "^2.3.1",
     "@tiptap/pm": "^2.3.1",
