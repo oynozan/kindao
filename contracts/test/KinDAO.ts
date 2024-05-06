@@ -1,5 +1,7 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
+// @ts-expect-error everything ok
+import { utils } from '@multiplechain/tron';
 import { KinDAO, KDAO } from '../typechain-types';
 import { EventLog, Log, type Signer as EtherSigner } from "ethers";
 
@@ -25,11 +27,7 @@ describe("KinDAO", () => {
     const notAdmin = "0x74dBE9cA4F93087A27f23164d4367b8ce66C33e2";
 
     const tokenFormat = async (amount: number) => {
-        return '0x' + (BigInt(amount) * 10n ** await token.decimals()).toString(16);
-    }
-
-    const fromTokenFormat = async (amount: BigInt) => {
-        return Number(amount) / 10 ** Number(await token.decimals());
+        return utils.numberToHex(amount, Number(await token.decimals()));
     }
 
     before(async function () {
@@ -171,6 +169,10 @@ describe("KinDAO", () => {
         it('Finalize proposal', async function () {
             await contract.connect(owner).finalizeProposal(proposalId);
             expect((await contract.getProposal(proposalId))[1][6]).to.be.true;
+        })
+
+        it('Check earned', async function () {
+            expect(await token.balanceOf(factCreator3.address)).to.be.equal(await tokenFormat(242.5));
         })
     })
 

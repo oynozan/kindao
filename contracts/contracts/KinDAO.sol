@@ -38,6 +38,7 @@ contract KinDAO is Ownable {
     struct Profile {
         string username;
         string avatarUrl;
+        uint256 earned;
     }
 
     struct Proposal {
@@ -176,7 +177,7 @@ contract KinDAO is Ownable {
     function createProfile(string memory _username, string memory _avatarUrl) public {
         require(_compareString(_username, ""), "Username is required");
         require(usernames[_username] == false, "Username is already taken");
-        profiles[msg.sender] = Profile(_username, _avatarUrl);
+        profiles[msg.sender] = Profile(_username, _avatarUrl, 0);
         profileIds.push(msg.sender);
         totals.profile += 1;
         usernames[_username] = true;
@@ -224,7 +225,14 @@ contract KinDAO is Ownable {
 
         for (uint256 i = 0; i < count; i++) {
             Fact memory fact = _facts[i];
+            Profile storage profile = profiles[fact.creator];
+
+            if (_compareString(profile.username, "")) {
+                profile.earned += _totalPayValueToFactCreators;
+            }
+
             uint256 factCreatorFee = 0;
+
             if (i == 0) {
                 factCreatorFee = _totalPayValueToFactCreators * firstFactCreatorFeeRate / 100;
             } else if (i == 1) {
@@ -232,6 +240,7 @@ contract KinDAO is Ownable {
             } else if (i == 2) {
                 factCreatorFee = _totalPayValueToFactCreators * thirdFactCreatorFeeRate / 100;
             }
+            
 
             utilityToken.transfer(fact.creator, factCreatorFee);
         }
