@@ -13,9 +13,9 @@ export default function DropdownButton({
     items,
     children,
 } : {
-    click: () => void,
+    click?: () => void,
     type: string,
-    custom: object,
+    custom?: object,
     items: Array<ReactElement>,
     children: React.ReactNode
 }) {

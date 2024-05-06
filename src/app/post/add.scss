@@ -1,0 +1,60 @@
+@import '[id]/post.scss';
+
+#publish-request {
+    margin-top: 10px;
+
+    h5 {
+        margin-top: 20px;
+    }
+
+    label {
+        display: block;
+        font-weight: 500;
+        font-size: 18px;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    input {
+        display: block;
+        width: 100%;
+        padding: 10px;
+    }
+
+    .bottom {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+
+        button {
+            padding: 10px 50px;
+        }
+
+        @include W(768px) {
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+
+            button, input, > div {
+                width: 100%;
+            }
+        }
+    }
+
+    .preview-title {
+        margin-top: 50px;
+        padding-bottom: 20px;
+        font-size: 18px;
+        border-bottom: 2px $light-50 dashed;
+    }
+
+    h1 {
+        margin: 10px 0;
+    }
+
+    .preview {
+        @include post();
+
+        padding: 20px 0 40px 0;
+    }
+}

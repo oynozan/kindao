@@ -1,0 +1,88 @@
+.answer-box {
+    @include glass;
+
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    border: 1px solid $light-50;
+    padding: 20px;
+    transition: 300ms;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 16px;
+
+    &:hover {
+        background: rgba(255, 255, 255, .15);
+    }
+
+    &.approved {
+        border-color: rgb(0, 228, 0);
+    }
+
+    .answer {
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    > div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &.top {
+            margin-bottom: 10px;
+
+            p {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                font-weight: 500;
+                font-size: 20px;
+
+                svg {
+                    font-size: 30px;
+                    margin-left: 5px;
+                }
+            }
+
+            .approval {
+                color: rgb(0, 228, 0);
+                font-size: 20px;
+            }
+
+            &.positive {
+                p { color: rgb(0, 228, 0); }
+            }
+            &.negative {
+                p { color: $main; }
+            }
+            &.zero {
+                p { color: $light-50; }
+            }
+        }
+
+        &.bottom {
+            display: flex;
+            align-items: flex-end;
+            flex: 1;
+            margin-top: 20px;
+
+            p {
+                color: $light-50;
+            }
+
+            @include W(600px) {
+                flex-direction: column;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    }
+
+    p {
+        color: $light;
+    }
+}

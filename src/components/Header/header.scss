@@ -1,11 +1,16 @@
 header {
+    position: fixed;
+    width: 100%;
+    z-index: 20;
     display: flex;
     align-items: center;
     height: 90px;
     padding: 20px;
-    background: $light-dark;
-    border-bottom: 1px solid $border;
-    backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid $light-main;
 
     .links {
         flex: 1;
@@ -37,6 +42,20 @@ header {
 
     .mobile {
         display: none;
+        position: relative;
+
+        .dropdown {
+            right: 10px;
+            width: 150px;
+
+            .item {
+                padding: 0;
+
+                a {
+                    padding: 10px;
+                }
+            }
+        }
     }
 
     @include W(850px) {

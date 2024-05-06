@@ -3,6 +3,7 @@ import { Inter, Poppins } from "next/font/google";
 import { Toaster } from 'react-hot-toast';
 
 import Modals from "@/components/Modal/Modals";
+import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
 import '../styles/main.scss';
@@ -11,8 +12,8 @@ const inter = Inter({ variable: "--inter", subsets: ["latin"] });
 const poppins = Poppins({ variable: "--poppins", weight: "400", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "Kindao",
-    description: "Fact Check DAO application",
+    title: "Kindao - Decentralized Fact-Check",
+    description: "Fact-Check DAO application",
 };
 
 export default function RootLayout({
@@ -30,6 +31,7 @@ export default function RootLayout({
                 <Modals />
                 <Header />
                 <main>{children}</main>
+                <Footer />
             </body>
         </html>
     )

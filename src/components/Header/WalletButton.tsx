@@ -1,6 +1,6 @@
 'use client'
 
-import * as Tron from '@multiplechain/tron';
+import { browser, Provider } from '@multiplechain/tron';
 
 import Button from "../Button";
 import { useModalStore } from "@/lib/states";
@@ -20,11 +20,11 @@ export default function WalletButton() {
         })
     }
 
-    useEffect(() => {
+    /*useEffect(() => {
         // Tron window variable declaration for browser
-        (window as any).Tron = Tron;
+        (window as any).Tron = browser;
 
-        const provider = new Tron.Provider({
+        const provider = new Provider({
             testnet: true
         });
 
@@ -34,16 +34,16 @@ export default function WalletButton() {
                 await adapter.disconnect()
             }
 
-            const wallet = new Tron.browser.Wallet(adapter)
+            const wallet = new browser.Wallet(adapter)
             const adapterProvider = await wallet.connect(provider, {
                 projectId: ''
             })
         };
 
-        let adapters = Tron.browser.adapters;
+        let adapters = browser.adapters;
 
         console.log(adapters);
-    }, [Tron]);
+    }, []);*/
 
     return (
         <Button

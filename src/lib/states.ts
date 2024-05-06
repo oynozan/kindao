@@ -13,6 +13,22 @@ export const useWalletStore = create<WalletStore>((set) => ({
     setWallet: wallet => set(() => ({ wallet })),
 }))
 
+/* Content States */
+interface EditorStore {
+    content: string,
+    setContent: (i: string) => void
+}
+
+export const useContentStore = create<EditorStore>((set) => ({
+    content: "",
+    setContent: content => set(() => ({ content }))
+}))
+
+export const useAnswerStore = create<EditorStore>((set) => ({
+    content: "",
+    setContent: content => set(() => ({ content }))
+}))
+
 /* Modal States */
 // Wallet Modal
 interface ModalStore {

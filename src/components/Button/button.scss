@@ -23,4 +23,9 @@
             background: #ffffff10;
         }
     }
+
+    &.blank {
+        background: transparent;
+        padding: 0;
+    }
 }

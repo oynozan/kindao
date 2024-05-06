@@ -1,0 +1,23 @@
+/*
+ * Overwrites to Tiptap editor
+ */
+
+.tiptap {
+    border: 1px solid $light-50;
+    background: rgba(0, 0, 0, .4);
+    padding: 15px;
+    outline: none;
+    border-radius: 12px;
+    height: 400px;
+    font-size: 20px;
+    overflow-y: auto;
+    width: 100%;
+
+    p.is-editor-empty:first-child::before {
+        color: #adb5bd88;
+        content: attr(data-placeholder);
+        float: left;
+        height: 0;
+        pointer-events: none;
+    }
+}
