@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "npm run compile && hardhat run scripts/deploy.ts"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@openzeppelin/contracts": "^5.0.2",
+    "fs": "^0.0.1-security",
+    "hardhat": "^2.18.3"
+  },
+  "dependencies": {
+    "tronweb": "^5.3.2"
+  }
+}
