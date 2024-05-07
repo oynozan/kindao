@@ -58,7 +58,47 @@ header {
         }
     }
 
-    @include W(850px) {
+    .dropdown {
+        .item {
+            padding: 0 !important;
+
+            > a, button {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                padding: 10px;
+                width: 100%;
+            }
+        }
+    }
+
+    .header-profile {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px;
+        transition: 200ms;
+        border-radius: 10px;
+
+        .address {
+            font-size: 18px;
+            font-weight: 500;
+            color: $light;
+        }
+
+        .pfp {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        &:hover {
+            background-color: rgba(255, 255, 255, .1);
+        }
+    }
+
+    @include W(1000px) {
         justify-content: space-between;
 
         .actions, .links { display: none; }

@@ -1,0 +1,41 @@
+#leaderboard {
+    h2 {
+        margin-top: 20px;
+        font-size: 50px;
+        text-align: center;
+    }
+
+    p {
+        font-size: 20px;
+        text-align: center;
+        margin-bottom: 50px;
+    }
+}
+
+// Table overwrites
+.rdt_Table {
+    background-color: transparent !important;
+
+    .rdt_TableHead {
+        .rdt_TableHeadRow {
+            border-radius: 10px 10px 0 0;
+            background: $main;
+            color: $light;
+            font-size: 19px;
+            font-weight: 600;
+        }
+    }
+
+    .rdt_TableRow {
+        background: transparent;
+        color: $light;
+        font-size: 17px;
+        height: 60px;
+        font-weight: 500;
+        border-bottom-color: rgba(255, 255, 255, 0.253) !important;
+
+        &:nth-child(odd) {
+            background: rgba(255, 255, 255, .1);
+        }
+    }
+}

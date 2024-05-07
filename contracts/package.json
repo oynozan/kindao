@@ -11,6 +11,8 @@
     "hardhat": "^2.18.3"
   },
   "dependencies": {
-    "tronweb": "^5.3.2"
+    "@multiplechain/tron": "^0.2.11",
+    "tronweb": "^5.3.2",
+    "web3-utils": "^4.2.3"
   }
 }

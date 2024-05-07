@@ -25,7 +25,7 @@ export default function FactBox({
     date: Date
 }) {
     return (
-        <Link href={`/post/${id}`} className="fact-box">
+        <Link href={`/proposal/${id}`} className="fact-box">
             <div className="info">
                 <h3>{title}</h3>
                 <div className="bounty">{bounty.toFixed(2)}<FaAward /></div>

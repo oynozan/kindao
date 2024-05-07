@@ -22,13 +22,15 @@ export default function Button({
 }) {
     // Link
     if (href) {
-        <Link
-            className={`button ${type} ${className ? className : ""}`}
-            style={custom ? custom : undefined}
-            href={href}
-        >
-            {children}
-        </Link>
+        return (
+            <Link
+                className={`button ${type} ${className ? className : ""}`}
+                style={custom ? custom : undefined}
+                href={href}
+            >
+                {children}
+            </Link>
+        )
     }
 
     // Button

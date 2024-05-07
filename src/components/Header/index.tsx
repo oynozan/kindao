@@ -15,11 +15,10 @@ export default function Header() {
             </Link>
 
             <div className="links">
-                <Link href="/">Facts</Link>
-                <Link href="/post">Publish</Link>
+                <Link href="/">Proposals</Link>
+                <Link href="/publish">Publish</Link>
                 <Link href="/leaderboard">Leaderboard</Link>
-                <Link href="/withdraw">Withdraw</Link>
-                <Link href="/token">KINDAO Token</Link>
+                <Link href="/token">KDAO Token</Link>
             </div>
 
             <div className="actions">
@@ -31,10 +30,9 @@ export default function Header() {
                     type="blank"
                     items={[
                         <Link key={1} href="/">Facts</Link>,
-                        <Link key={2} href="/post">Publish</Link>,
+                        <Link key={2} href="/publish">Publish</Link>,
                         <Link key={3} href="/leaderboard">Leaderboard</Link>,
-                        <Link key={4} href="/withdraw">Withdraw</Link>,
-                        <Link key={5} href="/token">KINDAO Token</Link>,
+                        <Link key={5} href="/token">KDAO Token</Link>,
                     ]}
                 >
                     <IoMenu color="#fff" size={30} />

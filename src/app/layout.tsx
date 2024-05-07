@@ -1,6 +1,11 @@
+import dynamic from "next/dynamic";
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
 import { Toaster } from 'react-hot-toast';
+import { Inter, Poppins } from "next/font/google";
+
+const InitializeTron = dynamic(() => import('@/components/InitializeTron'), {
+    ssr: false
+});
 
 import Modals from "@/components/Modal/Modals";
 import Footer from "@/components/Footer";
@@ -28,6 +33,7 @@ export default function RootLayout({
 				${poppins.variable}
 			`}>
                 <Toaster position="top-center" />
+                <InitializeTron />
                 <Modals />
                 <Header />
                 <main>{children}</main>

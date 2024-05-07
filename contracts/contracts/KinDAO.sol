@@ -12,6 +12,7 @@ contract KinDAO is Ownable {
     uint256 immutable firstFactCreatorFeeRate = 50;
     uint256 immutable secondFactCreatorFeeRate = 30;
     uint256 immutable thirdFactCreatorFeeRate = 20;
+    uint256 immutable minimumBounty = 500000000000000000000;
 
     struct Totals {
         uint256 tokenAmount;
@@ -38,6 +39,7 @@ contract KinDAO is Ownable {
     struct Profile {
         string username;
         string avatarUrl;
+        uint256 earned;
     }
 
     struct Proposal {
@@ -60,6 +62,7 @@ contract KinDAO is Ownable {
         uint256 voteDown;
         uint128 createdAt;
         address creator;
+        bool approved;
     }
 
     struct Vote {
@@ -176,7 +179,8 @@ contract KinDAO is Ownable {
     function createProfile(string memory _username, string memory _avatarUrl) public {
         require(_compareString(_username, ""), "Username is required");
         require(usernames[_username] == false, "Username is already taken");
-        profiles[msg.sender] = Profile(_username, _avatarUrl);
+        require(!_compareString(profiles[msg.sender].username, ""), "Profile is already created");
+        profiles[msg.sender] = Profile(_username, _avatarUrl, 0);
         profileIds.push(msg.sender);
         totals.profile += 1;
         usernames[_username] = true;
@@ -198,6 +202,7 @@ contract KinDAO is Ownable {
         uint256 allowance = utilityToken.allowance(msg.sender, address(this));
 
         require(allowance >= _bounty, "Insufficient allowance");
+        require(_bounty >= minimumBounty, "Minimum bounty is 500");
 
         utilityToken.transferFrom(msg.sender, address(this), _bounty);
     
@@ -224,7 +229,14 @@ contract KinDAO is Ownable {
 
         for (uint256 i = 0; i < count; i++) {
             Fact memory fact = _facts[i];
+            Profile storage profile = profiles[fact.creator];
+
+            if (_compareString(profile.username, "")) {
+                profile.earned += _totalPayValueToFactCreators;
+            }
+
             uint256 factCreatorFee = 0;
+
             if (i == 0) {
                 factCreatorFee = _totalPayValueToFactCreators * firstFactCreatorFeeRate / 100;
             } else if (i == 1) {
@@ -232,19 +244,26 @@ contract KinDAO is Ownable {
             } else if (i == 2) {
                 factCreatorFee = _totalPayValueToFactCreators * thirdFactCreatorFeeRate / 100;
             }
+            
 
             utilityToken.transfer(fact.creator, factCreatorFee);
         }
     }
 
-    function finalizeProposal(string memory _proposalId) public onlyAdminOrCreator(_proposalId) {
+    function finalizeProposal(string memory _proposalId, string memory _approvedFactId) public onlyAdminOrCreator(_proposalId) {
         _checkProposal(_proposalId);
         Proposal storage proposal = proposals[_proposalId];
+        require(!proposal.isFinalized, "Proposal is already finalized");
+
+        Fact storage approvedFact = facts[_proposalId][_approvedFactId];
+        approvedFact.approved = true;
+
         uint256 providerFee = proposal.bounty * providerFeeRate / 100;
         uint256 totalPayValueToFactCreators = proposal.bounty - providerFee;
         _payFactCreatorFees(_proposalId, totalPayValueToFactCreators);
 
         proposal.isFinalized = true;
+
 
         emit ProposalFinalized(_proposalId, proposal.title, proposal.description, proposal.creator, proposal.createdAt);
     }
@@ -267,7 +286,7 @@ contract KinDAO is Ownable {
 
         totals.fact += 1;
         string memory id = _createId("fact");
-        facts[_proposalId][id] = Fact(id, _proposalId, _title, _description, _sourceMediaUrl, 0, 0, uint128(block.timestamp), msg.sender);
+        facts[_proposalId][id] = Fact(id, _proposalId, _title, _description, _sourceMediaUrl, 0, 0, uint128(block.timestamp), msg.sender, false);
         factIds[_proposalId].push(id);
 
         emit FactCreated(_proposalId, id, _title, _description, _sourceMediaUrl, msg.sender, uint128(block.timestamp));
@@ -316,7 +335,8 @@ contract KinDAO is Ownable {
         Profile[] memory _profiles = new Profile[](length);
 
         for (uint256 i = 0; i < length; i++) {
-            _profiles[i] = profiles[profileIds[startIndex + i]];
+            Profile memory profile = profiles[profileIds[i]];
+            _profiles[i] = profile;
         }
 
         return _profiles;
@@ -330,7 +350,7 @@ contract KinDAO is Ownable {
         Proposal[] memory _proposals = new Proposal[](length);
 
         for (uint256 i = 0; i < length; i++) {
-            _proposals[i] = proposals[proposalIds[startIndex + i]];
+            _proposals[i] = proposals[proposalIds[i]];
         }
 
         return _proposals;
@@ -344,7 +364,7 @@ contract KinDAO is Ownable {
         Fact[] memory _facts = new Fact[](length);
 
         for (uint256 i = 0; i < length; i++) {
-            _facts[i] = facts[_proposalId][factIds[_proposalId][startIndex + i]];
+            _facts[i] = facts[_proposalId][factIds[_proposalId][i]];
         }
 
         return _facts;
