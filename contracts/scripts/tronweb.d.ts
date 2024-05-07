@@ -51,6 +51,7 @@ declare module 'tronweb' {
             getTransaction(transactionID: any, callback?: any): Promise<any>;
             getConfirmedTransaction(transactionID: any, callback?: any): Promise<any>;
             getTransactionInfo(transactionID: any, callback?: any): Promise<any>;
+            getUnconfirmedTransactionInfo(transactionID: any, callback?: any): Promise<any>;
             getTransactionsToAddress(address: any, limit: number, offset: number, callback?: any): Promise<any>;
             getTransactionsFromAddress(address: any, limit: number, offset: number, callback?: any): Promise<any>;
             getTransactionsRelated(address: any, direction: any, limit: number, offset: number, callback?: any): Promise<any>;

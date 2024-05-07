@@ -2,7 +2,8 @@ import type { WalletInterface, ContractInterface } from '@multiplechain/types'
 import type * as TronType from '@/lib/tron/browser/index'
 import * as TronDefault from '@/lib/tron/index.es.js'
 import type TronWeb from 'tronweb';
-import abi from './abi.json'
+import { AbiCoder } from 'ethers';
+import abi from './abi.json';
 
 const utils = TronDefault.utils
 
@@ -191,6 +192,13 @@ export class KinDAO {
         return this.wallet.sendTransaction(signer)
     }
 
+    async findProposalId(txHash: string): Promise<string> {
+        const tx = await this.tronWeb.trx.getUnconfirmedTransactionInfo(txHash);
+        const log = tx.log.find((log: any) => log.topics.length == 1);
+        const decoded = AbiCoder.defaultAbiCoder().decode(["string"], "0x" + log.data);
+        return decoded[0];
+    }
+
     async finalizeProposal(proposalId: string): Promise<string> {
         const result = await this.createTx("finalizeProposal", proposalId);
 
@@ -213,6 +221,13 @@ export class KinDAO {
         const signer = new TronDefault.services.TransactionSigner(result, this.provider)
 
         return this.wallet.sendTransaction(signer)
+    }
+
+    async findFactId(txHash: string): Promise<string> {
+        const tx = await this.tronWeb.trx.getUnconfirmedTransactionInfo(txHash);
+        const log = tx.log.find((log: any) => log.topics.length == 1);
+        const decoded = AbiCoder.defaultAbiCoder().decode(["string", "string"], "0x" + log.data);
+        return decoded[1];
     }
 
     async voteFact(proposalId: string, factId: string, isUp: boolean): Promise<string> {
