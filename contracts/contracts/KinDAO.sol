@@ -40,6 +40,7 @@ contract KinDAO is Ownable {
         string username;
         string avatarUrl;
         uint256 earned;
+        address owner;
     }
 
     struct Proposal {
@@ -180,7 +181,7 @@ contract KinDAO is Ownable {
         require(_compareString(_username, ""), "Username is required");
         require(usernames[_username] == false, "Username is already taken");
         require(!_compareString(profiles[msg.sender].username, ""), "Profile is already created");
-        profiles[msg.sender] = Profile(_username, _avatarUrl, 0);
+        profiles[msg.sender] = Profile(_username, _avatarUrl, 0, msg.sender);
         profileIds.push(msg.sender);
         totals.profile += 1;
         usernames[_username] = true;
