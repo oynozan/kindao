@@ -1,6 +1,7 @@
 import fs from 'fs'
 import config from './config'
 import TronWeb from 'tronweb'
+import artifacts from '../artifacts/contracts/KinDAO.sol/KinDAO.json'
 
 interface Deployed {
     contractAddress: string;
@@ -8,7 +9,6 @@ interface Deployed {
 }
 
 export async function deploy(): Promise<Deployed> {
-    const artifacts = await import('../artifacts/contracts/KinDAO.sol/KinDAO.json')
 
     return new Promise(async (resolve, reject) => {
 
