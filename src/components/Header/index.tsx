@@ -16,7 +16,7 @@ export default function Header() {
 
             <div className="links">
                 <Link href="/">Proposals</Link>
-                <Link href="/post">Publish</Link>
+                <Link href="/publish">Publish</Link>
                 <Link href="/leaderboard">Leaderboard</Link>
                 <Link href="/token">KDAO Token</Link>
             </div>
