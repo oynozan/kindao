@@ -27,6 +27,7 @@ export default function WalletHandler() {
     }
 
     const adapterTemplate = (adapter: WalletAdapterInterface) => {
+    
         const statuses = {
             universal:       <span key={1}></span>,
             detected:        <span key={2} className="detected">Detected</span>,
@@ -92,9 +93,7 @@ export default function WalletHandler() {
         <div className="wallet-list-wrapper">
             <div className="wallet-list-container">
                 {Object.values(adapters).map((adapter, index) => (
-                    <div key={index}>
-                        {adapterTemplate(adapter as WalletAdapterInterface)}
-                    </div>
+                    adapterTemplate(adapter as WalletAdapterInterface)
                 ))}
             </div>
         </div>

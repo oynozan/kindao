@@ -257,7 +257,7 @@ export class KinDAO {
             id: proposal.id,
             title: proposal.title,
             description: proposal.description,
-            creator: proposal.creator,
+            creator: this.tronWeb.address.fromHex(proposal.creator),
             bounty: utils.hexToNumber(proposal.bounty, 18),
             createdAt: Number(proposal.createdAt),
             isFinalized: proposal.isFinalized
@@ -275,7 +275,7 @@ export class KinDAO {
             voteUp: Number(fact.voteUp),
             voteDown: Number(fact.voteDown),
             createdAt: Number(fact.createdAt),
-            creator: fact.creator
+            creator: this.tronWeb.address.fromHex(fact.creator)
         }));
     }
 
@@ -294,7 +294,7 @@ export class KinDAO {
             voteUp: Number(fact.voteUp),
             voteDown: Number(fact.voteDown),
             createdAt: Number(fact.createdAt),
-            creator: fact.creator
+            creator: this.tronWeb.address.fromHex(fact.creator)
         }));
     }
 
@@ -303,7 +303,7 @@ export class KinDAO {
         return votes.map((vote: any) => ({
             isUp: vote.isUp,
             factId: vote.factId,
-            voter: vote.voter
+            voter: this.tronWeb.address.fromHex(vote.voter)
         }));
     }
 
@@ -316,40 +316,43 @@ export class KinDAO {
         };
     }
 
-    async getProposal(proposalId: string): Promise<Proposal> {
+    async getProposal(proposalId: string): Promise<Proposal | null> {
         const proposal = await this.contract.callMethod("getProposal", proposalId);
+        if (proposal[0] == false) return null;
         return {
-            id: proposal.id,
-            title: proposal.title,
-            description: proposal.description,
-            creator: proposal.creator,
-            bounty: utils.hexToNumber(proposal.bounty, 18),
-            createdAt: Number(proposal.createdAt),
-            isFinalized: proposal.isFinalized
+            id: proposal[1].id,
+            title: proposal[1].title,
+            description: proposal[1].description,
+            creator: this.tronWeb.address.fromHex(proposal[1].creator),
+            bounty: utils.hexToNumber(proposal[1].bounty, 18),
+            createdAt: Number(proposal[1].createdAt),
+            isFinalized: proposal[1].isFinalized
         };
     }
 
-    async getFact(proposalId: string, factId: string): Promise<Fact> {
+    async getFact(proposalId: string, factId: string): Promise<Fact | null> {
         const fact = await this.contract.callMethod("getFact", proposalId, factId);
+        if (fact[0] == false) return null;
         return {
-            id: fact.id,
-            proposalId: fact.proposalId,
-            title: fact.title,
-            description: fact.description,
-            sourceMediaUrl: fact.sourceMediaUrl,
-            voteUp: Number(fact.voteUp),
-            voteDown: Number(fact.voteDown),
-            createdAt: Number(fact.createdAt),
-            creator: fact.creator
+            id: fact[1].id,
+            proposalId: fact[1].proposalId,
+            title: fact[1].title,
+            description: fact[1].description,
+            sourceMediaUrl: fact[1].sourceMediaUrl,
+            voteUp: Number(fact[1].voteUp),
+            voteDown: Number(fact[1].voteDown),
+            createdAt: Number(fact[1].createdAt),
+            creator: this.tronWeb.address.fromHex(fact[1].creator)
         };
     }
 
-    async getVote(factId: string, address: string): Promise<Vote> {
+    async getVote(factId: string, address: string): Promise<Vote | null> {
         const vote = await this.contract.callMethod("getVote", factId, address);
+        if (vote[0] == false) return null;
         return {
-            isUp: vote.isUp,
-            factId: vote.factId,
-            voter: vote.voter
+            isUp: vote[1].isUp,
+            factId: vote[1].factId,
+            voter: this.tronWeb.address.fromHex(vote[1].voter)
         };
     }
 
