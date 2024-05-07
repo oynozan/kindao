@@ -8,7 +8,7 @@ export default function Home() {
         <div id="home">
             <nav>
                 <h1>Welcome to the Universe of <span>Decentralized Fact-Check</span></h1>
-                <p>Kindao is a &quot;decentralized fact-check&quot; application. You can earn KINDAO tokens by fact-checking and contributing against online misinformation.</p>
+                <p>Kindao is a &quot;decentralized fact-check&quot; application. You can earn KDAO tokens by fact-checking and contributing against online misinformation.</p>
             </nav>
 
             <div className="content">
@@ -33,7 +33,7 @@ export default function Home() {
                         <p>{stats.totalFactRequests}</p>
                         <h4>Total Fact Reviews</h4>
                         <p>{stats.totalFactReviews}</p>
-                        <h4>Earned KINDAO Tokens</h4>
+                        <h4>Earned KDAO Tokens</h4>
                         <p>{stats.totalEarnedTokens}</p>
                         <h4>Total Fact-Checkers</h4>
                         <p>{stats.totalFactCheckers}</p>

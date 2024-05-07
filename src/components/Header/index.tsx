@@ -19,7 +19,7 @@ export default function Header() {
                 <Link href="/post">Publish</Link>
                 <Link href="/leaderboard">Leaderboard</Link>
                 <Link href="/withdraw">Withdraw</Link>
-                <Link href="/token">KINDAO Token</Link>
+                <Link href="/token">KDAO Token</Link>
             </div>
 
             <div className="actions">
@@ -34,7 +34,7 @@ export default function Header() {
                         <Link key={2} href="/post">Publish</Link>,
                         <Link key={3} href="/leaderboard">Leaderboard</Link>,
                         <Link key={4} href="/withdraw">Withdraw</Link>,
-                        <Link key={5} href="/token">KINDAO Token</Link>,
+                        <Link key={5} href="/token">KDAO Token</Link>,
                     ]}
                 >
                     <IoMenu color="#fff" size={30} />
