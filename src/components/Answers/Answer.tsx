@@ -7,6 +7,7 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
+import DOMPurify from 'dompurify';
 
 const WalletHandler = dynamic(() => import('@/components/Header/WalletHandler'), {
     ssr: false
@@ -110,7 +111,7 @@ export default function AnswerSection({
                 </div>
             </div>
             <div className="content">
-                <p className="answer" dangerouslySetInnerHTML={{ __html: answer || "" }}></p>
+            <p className="answer" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(answer || "") }}></p>
 
                 <div className="bottom">
                     <p className="date">{formatDate(date)}</p>

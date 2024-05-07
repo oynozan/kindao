@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { Proposal } from '@/lib/kindao';
 import { useTronStore } from '@/lib/states';
 import { formatDate, truncateWalletAddress } from '@/lib/helpers';
+import DOMPurify from 'dompurify';
 
 export default function PostComponent({ id } : { id: string }) {
 
@@ -43,7 +44,7 @@ export default function PostComponent({ id } : { id: string }) {
                 <div className="bounty">{(proposal?.bounty || 0).toFixed(2)} KDAO <FaAward /></div>
             </div>
 
-            <p dangerouslySetInnerHTML={{ __html: proposal?.description || "" }}></p>
+            <p dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(proposal?.description || "") }}></p>
 
             <div className="bottom">
                 <p className="date">{proposal?.createdAt ? formatDate(new Date(proposal.createdAt)) : ""}</p>
