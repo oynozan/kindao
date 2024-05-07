@@ -10,7 +10,7 @@ const Tron = TronDefault as typeof TronType;
 
 export default function InitializeTron() {
 
-    const tronProvider = new Tron.Provider({ testnet: false });
+    const tronProvider = new Tron.Provider({ testnet: true });
 
     const setTron = useTronStore(state => state.setTron);
 

@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { KinDAO } from '@/lib/kindao'
 import type * as TronType from '@/lib/tron/browser/index'
 import type { WalletInterface } from "@multiplechain/types";
 
@@ -6,8 +7,10 @@ import type { WalletInterface } from "@multiplechain/types";
 interface TronStore {
     // @ts-expect-error everything is fine
     tron: TronType | null;
+    kindao: KinDAO | null;
     provider: TronType.Provider | null;
     wallet: WalletInterface | null;
+    setKinDao: (i: KinDAO) => void;
     setWallet: (i: WalletInterface) => void;
     setTron: (
         // @ts-expect-error everything is fine
@@ -19,7 +22,9 @@ interface TronStore {
 export const useTronStore = create<TronStore>((set) => ({
     tron: null,
     wallet: null,
+    kindao: null,
     provider: null,
+    setKinDao: (kindao) => set(() => ({ kindao })),
     setWallet: (wallet) => set(() => ({ wallet })),
     setTron: (tron, provider) => set(() => ({ tron, provider })),
 }));

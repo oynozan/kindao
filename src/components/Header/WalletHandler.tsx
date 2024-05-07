@@ -2,20 +2,28 @@
 
 import './wallets.scss';
 import Image from 'next/image';
-import { useTronStore } from '@/lib/states';
-import type { WalletAdapterInterface } from '@multiplechain/types';
+import { KinDAO } from '@/lib/kindao'
+import { useTronStore, useModalStore } from '@/lib/states';
+import type { WalletAdapterInterface, WalletAdapterListType } from '@multiplechain/types';
 
 export default function WalletHandler() {
 
+    const setModal: (type: string, options: any) => void = useModalStore(state => state.setModal);
     const { utils, browser, types } = useTronStore(state => state.tron)
     const setWallet = useTronStore(state => state.setWallet);
+    const setKinDao = useTronStore(state => state.setKinDao);
     const provider = useTronStore(state => state.provider);
 
     const connectWallet = async (adapter: WalletAdapterInterface): Promise<void> => {
         const wallet = new browser.Wallet(adapter, provider);
-        await wallet.connect(provider, { projectId: 'kindao' });
-        console.log(wallet);
+        await wallet.connect(provider, {
+            projectId: '113d9f5689edd84ff230c2a6d679c80c'
+        });
+        const kinDao = new KinDAO(wallet, provider);
+        await kinDao.setContract();
+        setKinDao(kinDao);
         setWallet(wallet);
+        setModal('', {});
     }
 
     const adapterTemplate = (adapter: WalletAdapterInterface) => {
@@ -64,10 +72,25 @@ export default function WalletHandler() {
         )
     }
 
+    let adapters = browser.adapters
+
+    const sortedKeys = Object.keys(adapters).sort(function(a, b) {
+        const order = { true: 1, universal: 2, false: 3 };
+        const valueA = adapters[a].platforms.includes('UNIVERSAL') ? 'universal' : adapters[a].isDetected();
+        const valueB = adapters[b].platforms.includes('UNIVERSAL') ? 'universal' : adapters[b].isDetected();
+        return order[valueA as keyof typeof order] - order[valueB as keyof typeof order];                     
+    });
+
+    // set sorted adapters
+    adapters = sortedKeys.reduce((sortedObj: WalletAdapterListType, key) => {
+        sortedObj[key] = adapters[key];
+        return sortedObj;
+    }, {});
+
     return (
         <div className="wallet-list-wrapper">
             <div className="wallet-list-container">
-                {Object.values(browser.adapters).map((adapter, index) => (
+                {Object.values(adapters).map((adapter, index) => (
                     adapterTemplate(adapter as WalletAdapterInterface)
                 ))}
             </div>
