@@ -1,10 +1,14 @@
 'use client'
 
-import Image from "next/image";
+import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import type { WalletInterface } from "@multiplechain/types";
 
 import Button from "../Button";
+import ProfilePicture from "../ProfilePicture";
+import DropdownButton from "../Dropdown/DropdownButton";
+
 import { truncateWalletAddress } from "@/lib/helpers";
 import { useModalStore, useTronStore } from "@/lib/states";
 
@@ -16,6 +20,7 @@ export default function WalletButton() {
 
     const setModal: (type: string, options: any) => void = useModalStore(state => state.setModal);
     const setLoading: (loading: boolean) => void = useModalStore(state => state.setLoading);
+    const setWallet: (wallet: WalletInterface | null) => void = useTronStore(state => state.setWallet);
 
     const wallet = useTronStore(state => state.wallet);
 
@@ -29,6 +34,11 @@ export default function WalletButton() {
         })
     }
 
+    const disconnect = (): void => {
+        if (wallet?.adapter?.disconnect) wallet.adapter.disconnect();
+        setWallet(null);
+    }
+
     useEffect(() => {
         (async() => {
             setAddress(await wallet?.getAddress() ?? null);
@@ -39,13 +49,23 @@ export default function WalletButton() {
     return (
         <>
         {address ? (
-            <p className="address">{truncateWalletAddress(address)}</p>
+            <DropdownButton
+                type="blank"
+                items={[
+                    <Button key={1} type="blank" href={`/profile/${address}`}>Profile</Button>,
+                    <Button key={2} type="blank" click={disconnect}>Disconnect</Button>
+                ]}
+            >
+                <div className="header-profile">
+                    <p className="address">{truncateWalletAddress(address)}</p>
+                    <ProfilePicture address={address} />
+                </div>
+            </DropdownButton>
         ) : (
             <Button
-                href="/"
                 type="main"
                 click={openWalletModal}
-                >
+            >
                 Connect your Wallet
             </Button>
         )}

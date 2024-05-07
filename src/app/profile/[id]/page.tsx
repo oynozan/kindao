@@ -6,11 +6,11 @@ import { answers } from "@/data/dummy/answers";
 import { users } from '@/data/dummy/users';
 
 import AnswerBox from "@/components/AnswerBox";
-import { stringToColor } from '@/lib/helpers';
 import FactBox from "@/components/FactBox";
 import NotFound from '@/app/not-found';
 
 import '../profile.scss';
+import ProfilePicture from "@/components/ProfilePicture";
 
 interface AnswerInterface {
     id: string;
@@ -37,12 +37,7 @@ export default function Profile({
         <div id="profile">
             <div className="head">
                 <div className="pfp-container">
-                    <div
-                        className="pfp"
-                        style={{
-                            background: `linear-gradient(45deg, ${stringToColor(userAddress)}, #2b0107)`
-                        }}
-                    ></div>
+                    <ProfilePicture address={userAddress} />
                 </div>
                 <div className="info">
                     <a

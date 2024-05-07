@@ -25,7 +25,9 @@ export default function Modal({
             onClick={close}
         >
             <div className="modal-content">
-                {children}
+                <div style={loading ? { display: "none" } : undefined}>
+                    {children}
+                </div>
                 {loading && (
                     <Image
                         src="loader.svg"

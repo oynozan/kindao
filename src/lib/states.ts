@@ -11,7 +11,7 @@ interface TronStore {
     provider: TronType.Provider | null;
     wallet: WalletInterface | null;
     setKinDao: (i: KinDAO) => void;
-    setWallet: (i: WalletInterface) => void;
+    setWallet: (i: WalletInterface | null) => void;
     setTron: (
         // @ts-expect-error everything is fine
         i: TronType,

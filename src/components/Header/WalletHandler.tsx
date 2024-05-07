@@ -17,6 +17,9 @@ export default function WalletHandler() {
     const provider = useTronStore(state => state.provider);
 
     const connectWallet = async (adapter: WalletAdapterInterface): Promise<void> => {
+
+        setLoading(true);
+
         const wallet = new browser.Wallet(adapter, provider);
         await wallet.connect(provider, { projectId: '113d9f5689edd84ff230c2a6d679c80c' });
         const kinDao = new KinDAO(wallet, provider);
@@ -24,10 +27,11 @@ export default function WalletHandler() {
         setKinDao(kinDao);
         setWallet(wallet);
         setModal('', {});
+
+        setLoading(false);
     }
 
     const adapterTemplate = (adapter: WalletAdapterInterface) => {
-    
         const statuses = {
             universal:       <span key={1}></span>,
             detected:        <span key={2} className="detected">Detected</span>,
