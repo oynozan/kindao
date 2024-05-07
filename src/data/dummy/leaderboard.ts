@@ -1,55 +1,55 @@
 export interface Leaderboard {
-    user: string
+    username: string
     earned: number
 }
 
 export const leaderboard = [
     {
-        user: "TVg4jk4PgRq5psuqetQN5GJiuRRAUrptSL",
+        username: "beycan",
         earned: 100
     },
     {
-        user: "TVg4jk4PgRq5psuqetQN5GJiuRRAUrptSL",
+        username: "beycan",
         earned: 100
     },
     {
-        user: "TVg4jk4PgRq5psuqetQN5GJiuRRAUrptSL",
+        username: "beycan",
         earned: 100
     },
     {
-        user: "TVg4jk4PgRq5psuqetQN5GJiuRRAUrptSL",
+        username: "beycan",
         earned: 100
     },
     {
-        user: "TVg4jk4PgRq5psuqetQN5GJiuRRAUrptSL",
+        username: "beycan",
         earned: 100
     },
     {
-        user: "TVg4jk4PgRq5psuqetQN5GJiuRRAUrptSL",
+        username: "beycan",
         earned: 100
     },
     {
-        user: "TVg4jk4PgRq5psuqetQN5GJiuRRAUrptSL",
+        username: "beycan",
         earned: 100
     },
     {
-        user: "TVg4jk4PgRq5psuqetQN5GJiuRRAUrptSL",
+        username: "beycan",
         earned: 100
     },
     {
-        user: "TVg4jk4PgRq5psuqetQN5GJiuRRAUrptSL",
+        username: "beycan",
         earned: 100
     },
     {
-        user: "TVg4jk4PgRq5psuqetQN5GJiuRRAUrptSL",
+        username: "beycan",
         earned: 100
     },
     {
-        user: "TVg4jk4PgRq5psuqetQN5GJiuRRAUrptSL",
+        username: "beycan",
         earned: 100
     },
     {
-        user: "TVg4jk4PgRq5psuqetQN5GJiuRRAUrptSL",
+        username: "beycan",
         earned: 100
     },
 ]

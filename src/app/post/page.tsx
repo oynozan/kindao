@@ -37,7 +37,7 @@ export default function PublishFactRequest() {
                     type="main"
                     click={() => Post(title, content, bounty)}
                 >
-                    Publish Fact Request
+                    Publish Proposal
                 </Button>
             </div>
 

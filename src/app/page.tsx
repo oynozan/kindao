@@ -38,8 +38,8 @@ export default function Home() {
                         <p>{stats.totalFactReviews}</p>
                         <h4>Earned KDAO Tokens</h4>
                         <p>{stats.totalEarnedTokens}</p>
-                        <h4>Total Fact-Checkers (Users)</h4>
-                        <p>{stats.totalFactCheckers}</p>
+                        <h4>Total Profiles</h4>
+                        <p>{stats.totalProfiles}</p>
                     </div>
 
                     <div className="social">
