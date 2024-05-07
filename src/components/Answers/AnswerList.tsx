@@ -12,19 +12,23 @@ export default function AnswerList({ id } : { id: string }) {
     const [facts, setFacts] = useState<Fact[]>([]);
 
     useEffect(() => {
-        if (kinDao) {
+        if (kinDao?.getFacts) {
             (async() => {
-                const proposal = await kinDao.getProposal(id);
-                if (proposal)  {
-                    setFacts(await kinDao.getFacts(id));
-                }
+                const facts = await kinDao.getFacts(id);
+                setFacts(facts?.length ? facts : []);
             })()
         }
     }, [kinDao])
 
     return (
         <div className="list">
-            { !facts?.length && (<p>No answers yet, be the first one!</p>) }
+            { !facts?.length && (
+                <>
+                    <br />
+                    <p>No answers yet, be the first one!</p>
+                    <br />
+                </>
+            )}
             { facts.map((fact, i) => {
                 return (
                     <AnswerSection

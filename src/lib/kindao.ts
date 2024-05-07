@@ -371,7 +371,6 @@ export class KinDAO {
 
     async getProposal(proposalId: string): Promise<Proposal | null> {
         const proposal = await this.contract.callMethod("getProposal", proposalId);
-        console.log(proposal)
         if (proposal[0] == false) return null;
         return {
             id: proposal[1].id,

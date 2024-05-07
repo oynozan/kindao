@@ -235,7 +235,15 @@
 
 .write-answer {
     margin-top: 50px;
-    width: 100%;
+    width: 80%;
+
+    @include W(1400px) {
+        width: 90%;
+    }
+
+    @include W(1000px) {
+        width: 100%;
+    }
 
     button {
         float: right;

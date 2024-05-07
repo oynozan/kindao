@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { FaAward } from 'react-icons/fa';
 
 import { Proposal } from '@/lib/kindao';
@@ -9,17 +10,18 @@ import { formatDate, truncateWalletAddress } from '@/lib/helpers';
 
 export default function PostComponent({ id } : { id: string }) {
 
+    const router = useRouter()
+
     const kinDao = useTronStore(state => state.kinDao);
     const [proposal, setProposal] = useState<Proposal | null>(null);
 
     useEffect(() => {
-        if (kinDao) {
+        // @ts-expect-error
+        if (kinDao?.getProposals) {
             (async() => {
                 const proposal = await kinDao.getProposal(id);
-                console.log(proposal)
-                if (proposal)  {
-                    setProposal(proposal);
-                }
+                if (proposal) setProposal(proposal);
+                else router.push("/404");
             })()
         }
     }, [kinDao])
@@ -31,7 +33,7 @@ export default function PostComponent({ id } : { id: string }) {
                 <div className="bounty">{(proposal?.bounty || 0).toFixed(2)}<FaAward /></div>
             </div>
 
-            <p>{proposal?.description || ""}</p>
+            <p dangerouslySetInnerHTML={{ __html: proposal?.description || "" }}></p>
 
             <div className="bottom">
                 <p className="date">{proposal?.createdAt ? formatDate(new Date(proposal.createdAt)) : ""}</p>
