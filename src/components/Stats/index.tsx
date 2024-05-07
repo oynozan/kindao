@@ -24,7 +24,7 @@ export default function Stats() {
             <p>{stats?.proposal || 0}</p>
             <h4>Total Facts</h4>
             <p>{stats?.fact || 0}</p>
-            <h4>Earned KDAO Tokens</h4>
+            <h4>Total KDAO Bounty</h4>
             <p>{stats?.tokenAmount || 0}</p>
             <h4>Total Profiles</h4>
             <p>{stats?.profile || 0}</p>
