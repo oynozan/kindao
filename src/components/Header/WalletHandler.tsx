@@ -2,25 +2,22 @@
 
 import './wallets.scss';
 import Image from 'next/image'
-import * as TronDefault from '@/lib/tron/index.es.js'
-import type * as TronType from '@/lib/tron/browser/index'
+import { useTronStore } from '@/lib/states'
 import type { WalletAdapterInterface } from '@multiplechain/types'
 
-// @ts-expect-error everything is fine
-const { Provider, browser, utils, types } = TronDefault as typeof TronType
-
-const provider = new Provider({
-    testnet: true,
-})
-
-const connectWallet = async (adapter: WalletAdapterInterface): Promise<void> => {
-    const wallet = new browser.Wallet(adapter, provider)
-    await wallet.connect(provider, {
-        projectId: '113d9f5689edd84ff230c2a6d679c80c'
-    })
-}
-
 export default function WalletHandler() {
+
+    const provider = useTronStore(state => state.provider)
+    const setWallet = useTronStore(state => state.setWallet)
+    const { utils, browser, types } = useTronStore(state => state.tron)
+
+    const connectWallet = async (adapter: WalletAdapterInterface): Promise<void> => {
+        const wallet = new browser.Wallet(adapter, provider)
+        await wallet.connect(provider, {
+            projectId: '113d9f5689edd84ff230c2a6d679c80c'
+        })
+        setWallet(wallet)
+    }
 
     const adapterTemplate = (adapter: WalletAdapterInterface) => {
     

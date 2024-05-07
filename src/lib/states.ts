@@ -1,15 +1,26 @@
 import { create } from "zustand";
+import * as TronDefault from '@/lib/tron/index.es.js'
+import type * as TronType from '@/lib/tron/browser/index'
+import type { WalletInterface } from '@multiplechain/types'
+// @ts-expect-error everything is fine
+const Tron = TronDefault as typeof TronType
 
-// Wallet Store
-interface WalletStore {
-	wallet: Array<any>,
-    chain: Array<number>,
-    setWallet: (i: Array<any>) => void,
+const tronProvider = new Tron.Provider({
+    testnet: true,
+})
+
+// Tron Store
+interface TronStore {
+	tron: typeof Tron,
+    provider: typeof tronProvider,
+    wallet: WalletInterface | null,
+    setWallet: (i: WalletInterface) => void,
 }
 
-export const useWalletStore = create<WalletStore>((set) => ({
-    wallet: [],
-    chain: [],
+export const useTronStore = create<TronStore>((set) => ({
+    tron: Tron,
+    wallet: null,
+    provider: tronProvider,
     setWallet: wallet => set(() => ({ wallet })),
 }))
 
