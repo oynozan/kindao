@@ -4,9 +4,11 @@ import './wallets.scss';
 import Image from 'next/image';
 import { KinDAO } from '@/lib/kindao';
 import { useTronStore, useModalStore } from '@/lib/states';
-import type { WalletAdapterInterface, WalletAdapterListType } from '@multiplechain/types';
+import type { WalletAdapterInterface, WalletAdapterListType, WalletInterface } from '@multiplechain/types';
 
-export default function WalletHandler() {
+type AfterConnectEvent = (wallet: WalletInterface) => void;
+
+export default function WalletHandler({ afterConnect } : { afterConnect?: AfterConnectEvent}) {
 
     const setModal: (type: string, options: any) => void = useModalStore(state => state.setModal);
     const setLoading: (loading: boolean) => void = useModalStore(state => state.setLoading);
@@ -29,6 +31,8 @@ export default function WalletHandler() {
         setModal('', {});
 
         setLoading(false);
+
+        if (afterConnect) afterConnect(wallet);
     }
 
     const adapterTemplate = (adapter: WalletAdapterInterface) => {

@@ -1,6 +1,5 @@
 'use client'
 
-import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import type { WalletInterface } from "@multiplechain/types";
@@ -18,8 +17,8 @@ const WalletHandler = dynamic(() => import('./WalletHandler'), {
 
 export default function WalletButton() {
 
-    const setModal: (type: string, options: any) => void = useModalStore(state => state.setModal);
     const setLoading: (loading: boolean) => void = useModalStore(state => state.setLoading);
+    const setModal: (type: string, options: any) => void = useModalStore(state => state.setModal);
     const setWallet: (wallet: WalletInterface | null) => void = useTronStore(state => state.setWallet);
 
     const wallet = useTronStore(state => state.wallet);

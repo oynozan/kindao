@@ -9,6 +9,8 @@ const Tron = TronDefault as typeof TronType;
 
 const utils = Tron.utils
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 interface Contract extends ContractInterface {
     setTronContract: () => Promise<void>;
     tronContract: any;
@@ -113,7 +115,7 @@ export class KinDAO {
     async createTx(method: string, ...args: any[]): Promise<TransactionData | false> {
         const address = await this.wallet.getAddress();
         const data = await this.contract.createTransactionData(method, address, ...args);
-        data.options.feeLimit = 100000000
+        data.options.feeLimit = 10000000000
         return await this.provider.tronWeb.triggerContract(data)
     }
 
@@ -196,6 +198,10 @@ export class KinDAO {
 
     async findProposalId(txHash: string): Promise<string> {
         const tx = await this.tronWeb.trx.getUnconfirmedTransactionInfo(txHash);
+        if (!tx.log) {
+            await sleep(4000);
+            return this.findProposalId(txHash);
+        }
         const log = tx.log.find((log: any) => log.topics.length == 1);
         const decoded = AbiCoder.defaultAbiCoder().decode(["string"], "0x" + log.data);
         return decoded[0];
@@ -227,6 +233,10 @@ export class KinDAO {
 
     async findFactId(txHash: string): Promise<string> {
         const tx = await this.tronWeb.trx.getUnconfirmedTransactionInfo(txHash);
+        if (!tx.log) {
+            await sleep(4000);
+            return this.findFactId(txHash);
+        }
         const log = tx.log.find((log: any) => log.topics.length == 1);
         const decoded = AbiCoder.defaultAbiCoder().decode(["string", "string"], "0x" + log.data);
         return decoded[1];

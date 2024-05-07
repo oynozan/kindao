@@ -29,7 +29,7 @@ export default function AnswerBox({
 }) {
     return (
         <Link
-            href={`/post/${post}#${id}`}
+            href={`/proposal/${post}#${id}`}
             className={"answer-box " + (approved ? "approved" : "")}
         >
             <div
