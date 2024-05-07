@@ -68,8 +68,8 @@ describe("KinDAO", () => {
         })
 
         it('Get profiles', async function () {
-            const result = await contract.getProfiles(0, 1);
-            expect(result.length).to.be.equal(1);
+            const result = await contract.getProfiles(0, 5);
+            expect(result.length).to.be.equal(2);
         })
     })
 
