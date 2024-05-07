@@ -1,96 +1,37 @@
-.wallet-list-wrapper {
-    position: absolute;
-    top: 50%;
-    left: 20%;
-    transform: translate(0, -50%);
-    background: #fff;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 8px 30px rgba(74,58,150, .2);
-    max-width: 400px;
-    width: 100%;
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
 .wallet-list-container {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    max-width: 100%;
-    list-style: none;
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.wallet-list-container li {
-    height: 90px;
-    position: relative;
-    width: 100%;
     display: flex;
-    align-items: center;
-    position: relative;
-    cursor: pointer;
-    box-sizing: border-box;
-    padding: 20px;
-}
+    flex-direction: column;
 
-.wallet-list-container li:hover {
-    background: #f5f7f9;
-}
+    > .wallet-adapter {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-radius: 10px;
+        color: $light;
+        transition: 200ms;
+        padding: 10px;
+        cursor: pointer;
 
-.wallet-list-container li .icon {
-    width: 50px;
-    height: 50px;
-    margin-right: 10px;
-    margin-left: 0px;
-    max-height: 100%;
-    max-width: 50px;
-}
+        &:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
 
-.wallet-list-container li .name {
-    font-size: 18px;
-    font-weight: 500;
-    color: #000;
-    margin-right: 35px;
-}
+        span.name {
+            display: block;
+            margin-right: 30px;
+            font-weight: 500;
+        }
 
-.wallet-list-container li .status {
-    font-size: 14px;
-    font-weight: 500;
-    color: #000;
-    margin-left: auto;
-}
+        span.status {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            color: $second;
+            font-weight: 500;
+        }
 
-.wallet-list-container li .status .detected,
-.wallet-list-container li .status .openInApp,
-.wallet-list-container li .status .openInAppManual {
-    color: #1e8454;
-}
-
-.wallet-list-container li .status .download,
-.wallet-list-container li .status .onlyDesktop {
-    color: #1292bc;
-}
-
-.wallet-list-container::-webkit-scrollbar {
-    width: 5px;
-}
-
-.wallet-list-container::-webkit-scrollbar-thumb {
-    background: #4099ff;
-    border-radius: 10px;
-}
-
-.wallet-list-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-.wallet-list-container.disabled {
-    opacity: 0.5;
-    cursor: no-drop;
-}
-
-.wallet-list-container.disabled > li {
-    pointer-events: none;
+        img {
+            border-radius: 10px;
+        }
+    }
 }
