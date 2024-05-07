@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { create } from "zustand";
 import * as TronDefault from '@/lib/tron/index.es.js'
 import type * as TronType from '@/lib/tron/browser/index'
@@ -22,6 +23,16 @@ export const useTronStore = create<TronStore>((set) => ({
     wallet: null,
     provider: tronProvider,
     setWallet: wallet => set(() => ({ wallet })),
+}))
+
+interface WalletsStore {
+    wallets: Array<ReactNode>
+    setWallets: (i: Array<ReactNode>) => void
+}
+
+export const useWalletsStore = create<WalletsStore>((set) => ({
+    wallets: [],
+    setWallets: wallets => set(() => ({ wallets })),
 }))
 
 /* Content States */
