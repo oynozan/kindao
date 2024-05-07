@@ -4,7 +4,7 @@ import { useAnswerStore, useModalStore, useTronStore } from "@/lib/states";
 import Editor from "../Editor";
 import Button from "../Button";
 import toast from 'react-hot-toast';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 
@@ -21,9 +21,11 @@ export default function Write({ id } : { id: string }) {
     const kinDao = useTronStore(state => state.kinDao);
     const setLoading: (loading: boolean) => void = useModalStore(state => state.setLoading);
     const setModal: (type: string, options: any) => void = useModalStore(state => state.setModal);
+    const [clicked, setClicked] = useState(false);
+    const [requested, setRequested] = useState(false);
 
     useEffect(() => {
-        if (wallet) {
+        if (wallet && clicked) {
             send()
         }
     }, [wallet])
@@ -55,9 +57,12 @@ export default function Write({ id } : { id: string }) {
 
     const send = async () => {
         try {
-            if (!content) {
+            if (content == '<p></p>') {
                 toast.error("Please enter a fact");
+                return;
             }
+
+            setClicked(true);
     
             if (!wallet) {
                 openWalletModal();
@@ -66,6 +71,9 @@ export default function Write({ id } : { id: string }) {
     
             createCustomModal("Please confirm the fact request from your wallet.");
     
+            if (requested) return;
+
+            setRequested(true);
             const txHash = await kinDao.createFact(id, content, '', '');
         
             createCustomModal("Fact is published successfully! Waiting for confirmation...");
@@ -76,6 +84,7 @@ export default function Write({ id } : { id: string }) {
     
             setModal("", {});
         } catch (error:any) {
+            setRequested(false);
             console.error(error);
             const message = String(error.message)
             if (!message.includes("Confirmation declined by user")) {

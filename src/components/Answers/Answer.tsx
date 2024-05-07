@@ -5,7 +5,7 @@ import { formatDate, truncateWalletAddress } from "@/lib/helpers";
 import { useModalStore, useTronStore } from '@/lib/states';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import DOMPurify from 'dompurify';
 
@@ -13,7 +13,7 @@ const WalletHandler = dynamic(() => import('@/components/Header/WalletHandler'),
     ssr: false
 });
 
-export default function AnswerSection({
+export default async function AnswerSection({
     factId,
     proposalId,
     answer,
@@ -36,9 +36,11 @@ export default function AnswerSection({
     const kinDao = useTronStore(state => state.kinDao);
     const setLoading: (loading: boolean) => void = useModalStore(state => state.setLoading);
     const setModal: (type: string, options: any) => void = useModalStore(state => state.setModal);
+    const [requested, setRequested] = useState(false);
+    const [clicked, setClicked] = useState(false);
 
     useEffect(() => {
-        if (wallet) {
+        if (wallet && clicked) {
             vote(isUp)
         }
     }, [wallet])
@@ -72,6 +74,8 @@ export default function AnswerSection({
         try {
             isUp = _isUp;
 
+            setClicked(true);
+
             if (!wallet) {
                 openWalletModal();
                 return;
@@ -79,6 +83,8 @@ export default function AnswerSection({
 
             createCustomModal("Please confirm the vote request from your wallet.");
 
+            if (requested) return;
+            setRequested(true);
             const txHash = await kinDao.voteFact(proposalId, factId, isUp);
 
             createCustomModal("Fact is voted! Waiting for confirmation...");
@@ -89,6 +95,7 @@ export default function AnswerSection({
 
             setModal("", {});
         } catch (error: any) {
+            setRequested(false);
             console.error(error);
             const message = String(error.message)
             if (!message.includes("Confirmation declined by user")) {
@@ -96,7 +103,7 @@ export default function AnswerSection({
             }
             setModal("", {});
         }
-    }
+    }  
 
     return (
         <div id={factId} className="answer-section">

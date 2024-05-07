@@ -2,7 +2,7 @@ import type { WalletInterface, ContractInterface } from '@multiplechain/types';
 import type * as TronType from '@/lib/tron/browser/index';
 import * as TronDefault from '@beycandeveloper/tron';
 import type TronWeb from 'tronweb';
-import { AbiCoder } from 'ethers';
+import { AbiCoder, N } from 'ethers';
 import abi from './abi.json';
 
 const Tron = TronDefault as typeof TronType;
@@ -14,6 +14,14 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 interface Contract extends ContractInterface {
     setTronContract: () => Promise<void>;
     tronContract: any;
+}
+
+export interface Totals {
+    tokenAmount: number;
+    proposal: number;
+    profile: number;
+    fact: number;
+    vote: number;
 }
 
 export interface Profile {
@@ -416,6 +424,17 @@ export class KinDAO {
             isUp: vote[1].isUp,
             factId: vote[1].factId,
             voter: this.tronWeb.address.fromHex(vote[1].voter)
+        };
+    }
+
+    async getTotals(): Promise<Totals> {
+        const totals = await this.contract.callMethod("totals");
+        return {
+            tokenAmount: utils.hexToNumber(totals.tokenAmount, 18),
+            proposal: Number(totals.proposal),
+            profile: Number(totals.profile),
+            fact: Number(totals.fact),
+            vote: Number(totals.vote)
         };
     }
 
