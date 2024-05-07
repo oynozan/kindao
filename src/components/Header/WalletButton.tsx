@@ -16,16 +16,13 @@ export default function WalletButton() {
     const openWalletModal = (): void => {
         setModal("custom", {
             content: (
-                <div>
-                    HELLO
-                </div>
+                <WalletHandler />
             )
         })
     }
 
     return (
         <>
-            <WalletHandler />
             <Button
                 href="/"
                 type="main"
