@@ -32,9 +32,11 @@ export default function PublishProposal() {
 
     const [title, setTitle] = useState<string>("");
     const [bounty, setBounty] = useState<number>(100);
+    const [clicked, setClicked] = useState(false);
+    const [requested, setRequested] = useState(false);
 
     useEffect(() => {
-        if (wallet) {
+        if (wallet && clicked) {
             publish(...Object.values(publishArgs) as [string, string, number]);
         }
     }, [wallet])
@@ -78,6 +80,8 @@ export default function PublishProposal() {
     
             publishArgs = { title, description, bounty };
     
+            setClicked(true);
+
             if (!wallet) {
                 openWalletModal();
                 return;
@@ -85,6 +89,9 @@ export default function PublishProposal() {
     
             createCustomModal("Please confirm the proposal request from your wallet.");
     
+            if (requested) return;
+            setRequested(true);
+
             const txHash = await kinDao.createProposal(title, description, bounty);
 
             createCustomModal("Proposal is published successfully! Waiting for confirmation...");
@@ -95,6 +102,7 @@ export default function PublishProposal() {
         
             setModal("", {});
         } catch (error: any) {
+            setRequested(false);
             console.error(error);
             const message = String(error.message)
             if (!message.includes("Confirmation declined by user")) {

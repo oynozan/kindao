@@ -29,9 +29,6 @@ export default function WalletHandler({ afterConnect } : { afterConnect?: AfterC
         setKinDao(kinDao);
         setWallet(wallet);
         setModal('', {});
-
-        console.log(await kinDao.getTotals())
-
         setLoading(false);
 
         if (afterConnect) afterConnect(wallet);
