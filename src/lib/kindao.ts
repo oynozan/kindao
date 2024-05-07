@@ -1,11 +1,13 @@
-import type { WalletInterface, ContractInterface } from '@multiplechain/types'
-import type * as TronType from '@/lib/tron/browser/index'
-import * as TronDefault from '@/lib/tron/index.es.js'
+import type { WalletInterface, ContractInterface } from '@multiplechain/types';
+import type * as TronType from '@/lib/tron/browser/index';
+import * as TronDefault from '@beycandeveloper/tron';
 import type TronWeb from 'tronweb';
 import { AbiCoder } from 'ethers';
 import abi from './abi.json';
 
-const utils = TronDefault.utils
+const Tron = TronDefault as typeof TronType;
+
+const utils = Tron.utils
 
 interface Contract extends ContractInterface {
     setTronContract: () => Promise<void>;
@@ -98,10 +100,10 @@ export class KinDAO {
 
     constructor(wallet: WalletInterface, provider?: TronType.Provider | null) {
         this.wallet = wallet;
-        this.provider = provider ?? TronDefault.Provider.instance
+        this.provider = provider ?? Tron.Provider.instance
         this.tronWeb = this.provider.tronWeb
-        this.contract = new TronDefault.assets.Contract(this.address, this.provider, abi)
-        this.token = new TronDefault.assets.Token(this.tokenAddress, this.provider, undefined)
+        this.contract = new Tron.assets.Contract(this.address, this.provider, abi as any)
+        this.token = new Tron.assets.Token(this.tokenAddress, this.provider, undefined)
         this.setContract = async () => {
             await this.contract.setTronContract()
             this.tronContract = this.contract.tronContract
@@ -123,10 +125,10 @@ export class KinDAO {
         const result = await this.createTx("addAdmin", address);
 
         if (result === false) {
-            throw new Error(TronDefault.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
+            throw new Error(Tron.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
         }
 
-        const signer = new TronDefault.services.TransactionSigner(result, this.provider)
+        const signer = new Tron.services.TransactionSigner(result, this.provider)
 
         return this.wallet.sendTransaction(signer)
     }
@@ -135,10 +137,10 @@ export class KinDAO {
         const result = await this.createTx("removeAdmin", address);
 
         if (result === false) {
-            throw new Error(TronDefault.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
+            throw new Error(Tron.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
         }
 
-        const signer = new TronDefault.services.TransactionSigner(result, this.provider)
+        const signer = new Tron.services.TransactionSigner(result, this.provider)
 
         return this.wallet.sendTransaction(signer)
     }
@@ -147,10 +149,10 @@ export class KinDAO {
         const result = await this.createTx("createProfile", username, avatarUrl);
 
         if (result === false) {
-            throw new Error(TronDefault.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
+            throw new Error(Tron.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
         }
 
-        const signer = new TronDefault.services.TransactionSigner(result, this.provider)
+        const signer = new Tron.services.TransactionSigner(result, this.provider)
 
         return this.wallet.sendTransaction(signer)
     }
@@ -159,10 +161,10 @@ export class KinDAO {
         const result = await this.createTx("updateProfile", username, avatarUrl);
 
         if (result === false) {
-            throw new Error(TronDefault.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
+            throw new Error(Tron.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
         }
 
-        const signer = new TronDefault.services.TransactionSigner(result, this.provider)
+        const signer = new Tron.services.TransactionSigner(result, this.provider)
 
         return this.wallet.sendTransaction(signer)
     }
@@ -176,18 +178,18 @@ export class KinDAO {
         const tokenBalance = await this.token.getBalance(await this.wallet.getAddress());
 
         if (tokenBalance < bounty) {
-            throw new Error(TronDefault.types.ErrorTypeEnum.INSUFFICIENT_BALANCE)
+            throw new Error(Tron.types.ErrorTypeEnum.INSUFFICIENT_BALANCE)
         }
 
-        const hexAmount = TronDefault.utils.numberToHex(bounty, await this.token.getDecimals());
+        const hexAmount = Tron.utils.numberToHex(bounty, await this.token.getDecimals());
 
         const result = await this.createTx("createProposal", title, description, hexAmount);
 
         if (result === false) {
-            throw new Error(TronDefault.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
+            throw new Error(Tron.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
         }
 
-        const signer = new TronDefault.services.TransactionSigner(result, this.provider)
+        const signer = new Tron.services.TransactionSigner(result, this.provider)
 
         return this.wallet.sendTransaction(signer)
     }
@@ -203,10 +205,10 @@ export class KinDAO {
         const result = await this.createTx("finalizeProposal", proposalId);
 
         if (result === false) {
-            throw new Error(TronDefault.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
+            throw new Error(Tron.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
         }
 
-        const signer = new TronDefault.services.TransactionSigner(result, this.provider)
+        const signer = new Tron.services.TransactionSigner(result, this.provider)
 
         return this.wallet.sendTransaction(signer)
     }
@@ -215,10 +217,10 @@ export class KinDAO {
         const result = await this.createTx("createFact", proposalId, title, description, sourceMediaUrl);
 
         if (result === false) {
-            throw new Error(TronDefault.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
+            throw new Error(Tron.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
         }
 
-        const signer = new TronDefault.services.TransactionSigner(result, this.provider)
+        const signer = new Tron.services.TransactionSigner(result, this.provider)
 
         return this.wallet.sendTransaction(signer)
     }
@@ -234,10 +236,10 @@ export class KinDAO {
         const result = await this.createTx("voteFact", proposalId, factId, isUp);
 
         if (result === false) {
-            throw new Error(TronDefault.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
+            throw new Error(Tron.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
         }
 
-        const signer = new TronDefault.services.TransactionSigner(result, this.provider)
+        const signer = new Tron.services.TransactionSigner(result, this.provider)
 
         return this.wallet.sendTransaction(signer)
     }
@@ -360,10 +362,10 @@ export class KinDAO {
         const result = await this.createTx("withdraw");
 
         if (result === false) {
-            throw new Error(TronDefault.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
+            throw new Error(Tron.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
         }
 
-        const signer = new TronDefault.services.TransactionSigner(result, this.provider)
+        const signer = new Tron.services.TransactionSigner(result, this.provider)
 
         return this.wallet.sendTransaction(signer)
     }

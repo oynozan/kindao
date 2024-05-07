@@ -2,10 +2,9 @@
 
 import { useEffect } from 'react';
 import { useTronStore } from '@/lib/states';
-import * as TronDefault from '@/lib/tron/index.es.js';
+import * as TronDefault from '@beycandeveloper/tron';
 import type * as TronType from '@/lib/tron/browser/index';
 
-// @ts-expect-error everything is fine
 const Tron = TronDefault as typeof TronType;
 
 export default function InitializeTron() {

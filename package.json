@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@beycandeveloper/tron": "^0.2.2",
     "@multiplechain/types": "^0.1.55",
     "@multiplechain/utils": "^0.1.18",
     "@tiptap/extension-hard-break": "^2.3.1",
