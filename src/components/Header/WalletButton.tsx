@@ -1,21 +1,13 @@
 'use client'
 
-import * as TronDefault from '@/lib/tron/index.es.js'
-import type * as TronType from '@/lib/tron/browser/index'
-import type { WalletAdapterInterface } from '@multiplechain/types'
-
-// @ts-expect-error everything is fine
-const { Provider, browser } = TronDefault as typeof TronType
+import dynamic from "next/dynamic";
 
 import Button from "../Button";
 import { useModalStore } from "@/lib/states";
-import { useEffect } from 'react';
 
-declare global {
-    interface Window {
-        connectAdapter: (adapter: WalletAdapterInterface) => Promise<string>;
-    }
-}
+const WalletHandler = dynamic(() => import('./WalletHandler'), {
+    ssr: false
+});
 
 export default function WalletButton() {
 
@@ -31,28 +23,16 @@ export default function WalletButton() {
         })
     }
 
-    useEffect(() => {
-        // Tron window variable declaration for browser
-        const provider = new Provider({
-            testnet: true
-        });
-
-        window.connectAdapter = async (adapter: WalletAdapterInterface): Promise<string> => {
-            const wallet = new browser.Wallet(adapter, provider)
-            return await wallet.connect(provider, {
-                projectId: '113d9f5689edd84ff230c2a6d679c80c'
-            })
-        };
-
-    }, []);
-
     return (
-        <Button
-            href="/"
-            type="main"
-            click={openWalletModal}
-        >
-            Connect your Wallet
-        </Button>
+        <>
+            <WalletHandler />
+            <Button
+                href="/"
+                type="main"
+                click={openWalletModal}
+            >
+                Connect your Wallet
+            </Button>
+        </>
     )
 }
