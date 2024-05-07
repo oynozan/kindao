@@ -49,7 +49,7 @@ export default function Editor({ set } : { set: (i: string) => void }) {
         set(editor?.getHTML() || "");
 
         editor?.on('update', data => {
-            set(data.editor.getHTML());
+            if (data.editor.getText()) set(data.editor.getHTML());
         });
     }, [editor])
 
