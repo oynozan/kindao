@@ -3,6 +3,9 @@ import FactBox from "@/components/FactBox";
 import { questions } from "@/data/dummy/questions";
 import { stats } from "@/data/dummy/stats";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 60;
+
 export default function Home() {
     return (
         <div id="home">
