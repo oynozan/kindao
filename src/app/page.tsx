@@ -29,13 +29,13 @@ export default function Home() {
                 </div>
                 <div className="sidebar">
                     <div className="stats">
-                        <h4>Total Posts</h4>
+                        <h4>Total Proposals</h4>
                         <p>{stats.totalFactRequests}</p>
-                        <h4>Total Fact Reviews</h4>
+                        <h4>Total Facts</h4>
                         <p>{stats.totalFactReviews}</p>
                         <h4>Earned KDAO Tokens</h4>
                         <p>{stats.totalEarnedTokens}</p>
-                        <h4>Total Fact-Checkers</h4>
+                        <h4>Total Fact-Checkers (Users)</h4>
                         <p>{stats.totalFactCheckers}</p>
                     </div>
 

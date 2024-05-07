@@ -2,13 +2,15 @@
 
 import './wallets.scss';
 import Image from 'next/image';
-import { KinDAO } from '@/lib/kindao'
+import { KinDAO } from '@/lib/kindao';
 import { useTronStore, useModalStore } from '@/lib/states';
 import type { WalletAdapterInterface, WalletAdapterListType } from '@multiplechain/types';
 
 export default function WalletHandler() {
 
     const setModal: (type: string, options: any) => void = useModalStore(state => state.setModal);
+    const setLoading: (loading: boolean) => void = useModalStore(state => state.setLoading);
+
     const { utils, browser, types } = useTronStore(state => state.tron)
     const setWallet = useTronStore(state => state.setWallet);
     const setKinDao = useTronStore(state => state.setKinDao);
@@ -25,7 +27,6 @@ export default function WalletHandler() {
     }
 
     const adapterTemplate = (adapter: WalletAdapterInterface) => {
-    
         const statuses = {
             universal:       <span key={1}></span>,
             detected:        <span key={2} className="detected">Detected</span>,
@@ -50,6 +51,8 @@ export default function WalletHandler() {
                 return statuses.openInAppManual;
             }
         }
+
+        setTimeout(() => setLoading(false), 100);
 
         return (
             <div

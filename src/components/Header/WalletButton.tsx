@@ -1,5 +1,6 @@
 'use client'
 
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 
@@ -14,6 +15,8 @@ const WalletHandler = dynamic(() => import('./WalletHandler'), {
 export default function WalletButton() {
 
     const setModal: (type: string, options: any) => void = useModalStore(state => state.setModal);
+    const setLoading: (loading: boolean) => void = useModalStore(state => state.setLoading);
+
     const wallet = useTronStore(state => state.wallet);
 
     const [address, setAddress] = useState<string | null>(null);
@@ -30,6 +33,7 @@ export default function WalletButton() {
         (async() => {
             setAddress(await wallet?.getAddress() ?? null);
         })()
+        setLoading(true);
     }, [wallet]);
 
     return (
