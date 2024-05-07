@@ -42,6 +42,7 @@ export interface Fact {
     voteDown: number;
     createdAt: number;
     creator: string;
+    approved: boolean;
 }
 
 export interface Vote {
@@ -84,9 +85,9 @@ export class KinDAO {
 
     provider: TronType.Provider;
 
-    wallet: WalletInterface;
+    wallet?: WalletInterface;
 
-    address = "TNSMH37nhxsNMXZaqr3dGTEH6FyUffzoY6";
+    address = "TBCeQ72Jmh9YuxXinhuHnQVx6ztCUyipeR";
 
     tokenAddress = "TY9dAUUAvFVkSMjfFncnZnVyoFD59c7QY4";
 
@@ -100,7 +101,7 @@ export class KinDAO {
 
     token: TronType.assets.Token;
 
-    constructor(wallet: WalletInterface, provider?: TronType.Provider | null) {
+    constructor(provider: TronType.Provider | null, wallet?: WalletInterface) {
         this.wallet = wallet;
         this.provider = provider ?? Tron.Provider.instance
         this.tronWeb = this.provider.tronWeb
@@ -113,6 +114,9 @@ export class KinDAO {
     }
 
     async createTx(method: string, ...args: any[]): Promise<TransactionData | false> {
+        if (!this.wallet) {
+            throw new Error("Wallet not connected")
+        }
         const address = await this.wallet.getAddress();
         const data = await this.contract.createTransactionData(method, address, ...args);
         data.options.feeLimit = 10000000000
@@ -124,6 +128,9 @@ export class KinDAO {
     }
 
     async addAdmin(address: string): Promise<string> {
+        if (!this.wallet) {
+            throw new Error("Wallet not connected")
+        }
         const result = await this.createTx("addAdmin", address);
 
         if (result === false) {
@@ -136,6 +143,9 @@ export class KinDAO {
     }
 
     async removeAdmin(address: string): Promise<string> {
+        if (!this.wallet) {
+            throw new Error("Wallet not connected")
+        }
         const result = await this.createTx("removeAdmin", address);
 
         if (result === false) {
@@ -148,6 +158,9 @@ export class KinDAO {
     }
 
     async createProfile(username: string, avatarUrl: string = ''): Promise<string> {
+        if (!this.wallet) {
+            throw new Error("Wallet not connected")
+        }
         const result = await this.createTx("createProfile", username, avatarUrl);
 
         if (result === false) {
@@ -160,6 +173,9 @@ export class KinDAO {
     }
 
     async updateProfile(username: string, avatarUrl: string = ''): Promise<string> {
+        if (!this.wallet) {
+            throw new Error("Wallet not connected")
+        }
         const result = await this.createTx("updateProfile", username, avatarUrl);
 
         if (result === false) {
@@ -172,10 +188,22 @@ export class KinDAO {
     }
 
     async approveToken(amount: number): Promise<string> {
+        if (!this.wallet) {
+            throw new Error("Wallet not connected")
+        }
         return this.wallet.sendTransaction(await this.token.approve(await this.wallet.getAddress(), this.address, amount))
     }
 
     async createProposal(title: string, description: string, bounty: number): Promise<string> {
+        if (!this.wallet) {
+            throw new Error("Wallet not connected")
+        }
+
+        const allowance = await this.token.getAllowance(await this.wallet.getAddress(), this.address);
+
+        if (allowance < bounty) {
+            await this.approveToken(bounty);
+        }
 
         const tokenBalance = await this.token.getBalance(await this.wallet.getAddress());
 
@@ -207,8 +235,12 @@ export class KinDAO {
         return decoded[0];
     }
 
-    async finalizeProposal(proposalId: string): Promise<string> {
-        const result = await this.createTx("finalizeProposal", proposalId);
+    async finalizeProposal(proposalId: string, approvedFactId: string): Promise<string> {
+        if (!this.wallet) {
+            throw new Error("Wallet not connected")
+        }
+
+        const result = await this.createTx("finalizeProposal", proposalId, approvedFactId);
 
         if (result === false) {
             throw new Error(Tron.types.ErrorTypeEnum.TRANSACTION_CREATION_FAILED)
@@ -220,6 +252,10 @@ export class KinDAO {
     }
 
     async createFact(proposalId: string, title: string, description: string, sourceMediaUrl: string): Promise<string> {
+        if (!this.wallet) {
+            throw new Error("Wallet not connected")
+        }
+
         const result = await this.createTx("createFact", proposalId, title, description, sourceMediaUrl);
 
         if (result === false) {
@@ -243,6 +279,10 @@ export class KinDAO {
     }
 
     async voteFact(proposalId: string, factId: string, isUp: boolean): Promise<string> {
+        if (!this.wallet) {
+            throw new Error("Wallet not connected")
+        }
+
         const result = await this.createTx("voteFact", proposalId, factId, isUp);
 
         if (result === false) {
@@ -287,7 +327,8 @@ export class KinDAO {
             voteUp: Number(fact.voteUp),
             voteDown: Number(fact.voteDown),
             createdAt: Number(fact.createdAt),
-            creator: this.tronWeb.address.fromHex(fact.creator)
+            creator: this.tronWeb.address.fromHex(fact.creator),
+            approved: fact.approved
         }));
     }
 
@@ -330,6 +371,7 @@ export class KinDAO {
 
     async getProposal(proposalId: string): Promise<Proposal | null> {
         const proposal = await this.contract.callMethod("getProposal", proposalId);
+        console.log(proposal)
         if (proposal[0] == false) return null;
         return {
             id: proposal[1].id,
@@ -354,7 +396,8 @@ export class KinDAO {
             voteUp: Number(fact[1].voteUp),
             voteDown: Number(fact[1].voteDown),
             createdAt: Number(fact[1].createdAt),
-            creator: this.tronWeb.address.fromHex(fact[1].creator)
+            creator: this.tronWeb.address.fromHex(fact[1].creator),
+            approved: fact[1].approved
         };
     }
 
@@ -369,6 +412,10 @@ export class KinDAO {
     }
 
     async withdraw(): Promise<string> {
+        if (!this.wallet) {
+            throw new Error("Wallet not connected")
+        }
+
         const result = await this.createTx("withdraw");
 
         if (result === false) {

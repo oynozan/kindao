@@ -335,6 +335,11 @@
 				"internalType": "string",
 				"name": "_proposalId",
 				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_approvedFactId",
+				"type": "string"
 			}
 		],
 		"name": "finalizeProposal",
@@ -398,6 +403,11 @@
 						"internalType": "address",
 						"name": "creator",
 						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "approved",
+						"type": "bool"
 					}
 				],
 				"internalType": "struct KinDAO.Fact[]",
@@ -479,6 +489,11 @@
 						"internalType": "address",
 						"name": "creator",
 						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "approved",
+						"type": "bool"
 					}
 				],
 				"internalType": "struct KinDAO.Fact",
@@ -555,6 +570,11 @@
 						"internalType": "address",
 						"name": "creator",
 						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "approved",
+						"type": "bool"
 					}
 				],
 				"internalType": "struct KinDAO.Fact[]",

@@ -23,6 +23,7 @@ let publishArgs = {}
 export default function PublishProposal() {
 
     const router = useRouter();
+    const wallet = useTronStore(state => state.wallet);
     const kinDao = useTronStore(state => state.kinDao);
     const content = useContentStore(state => state.content);
     const setContent = useContentStore(state => state.setContent);
@@ -37,10 +38,10 @@ export default function PublishProposal() {
     }
 
     useEffect(() => {
-        if (kinDao) {
+        if (wallet) {
             keepGoingToPublish()
         }
-    }, [kinDao])
+    }, [wallet])
 
     const openWalletModal = (): void => {
         setModal("custom", {
@@ -81,7 +82,7 @@ export default function PublishProposal() {
     
             publishArgs = { title, description, bounty };
     
-            if (!kinDao) {
+            if (!wallet) {
                 openWalletModal();
                 return;
             }

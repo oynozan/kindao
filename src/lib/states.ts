@@ -5,9 +5,9 @@ import type { WalletInterface } from "@multiplechain/types";
 
 // Tron Store + Wallet
 interface TronStore {
+    kinDao: KinDAO;
     // @ts-expect-error everything is fine
     tron: TronType | null;
-    kinDao: KinDAO | null;
     provider: TronType.Provider | null;
     wallet: WalletInterface | null;
     setKinDao: (i: KinDAO) => void;
@@ -22,8 +22,8 @@ interface TronStore {
 export const useTronStore = create<TronStore>((set) => ({
     tron: null,
     wallet: null,
-    kinDao: null,
     provider: null,
+    kinDao: {} as KinDAO,
     setKinDao: (kinDao) => set(() => ({ kinDao })),
     setWallet: (wallet) => set(() => ({ wallet })),
     setTron: (tron, provider) => set(() => ({ tron, provider })),
