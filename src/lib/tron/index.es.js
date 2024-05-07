@@ -71927,7 +71927,7 @@ class e5 {
    * @returns {Promise<void>} Set Tron contract
    */
   async setTronContract() {
-    this.tronContract === void 0 && (this.tronWeb.setAddress(this.address), this.tronContract = await this.tronWeb.contract(this.ABI).at(this.address));
+    this.tronContract === void 0 && (this.tronWeb.setAddress(this.address), this.tronContract = await this.tronWeb.contract(this.ABI, this.address));
   }
   /**
    * @returns {string} Contract address

@@ -177,6 +177,7 @@ contract KinDAO is Ownable {
     function createProfile(string memory _username, string memory _avatarUrl) public {
         require(_compareString(_username, ""), "Username is required");
         require(usernames[_username] == false, "Username is already taken");
+        require(!_compareString(profiles[msg.sender].username, ""), "Profile is already created");
         profiles[msg.sender] = Profile(_username, _avatarUrl, 0);
         profileIds.push(msg.sender);
         totals.profile += 1;
@@ -325,7 +326,8 @@ contract KinDAO is Ownable {
         Profile[] memory _profiles = new Profile[](length);
 
         for (uint256 i = 0; i < length; i++) {
-            _profiles[i] = profiles[profileIds[startIndex + i]];
+            Profile memory profile = profiles[profileIds[i]];
+            _profiles[i] = profile;
         }
 
         return _profiles;
@@ -339,7 +341,7 @@ contract KinDAO is Ownable {
         Proposal[] memory _proposals = new Proposal[](length);
 
         for (uint256 i = 0; i < length; i++) {
-            _proposals[i] = proposals[proposalIds[startIndex + i]];
+            _proposals[i] = proposals[proposalIds[i]];
         }
 
         return _proposals;
@@ -353,7 +355,7 @@ contract KinDAO is Ownable {
         Fact[] memory _facts = new Fact[](length);
 
         for (uint256 i = 0; i < length; i++) {
-            _facts[i] = facts[_proposalId][factIds[_proposalId][startIndex + i]];
+            _facts[i] = facts[_proposalId][factIds[_proposalId][i]];
         }
 
         return _facts;
