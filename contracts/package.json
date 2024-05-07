@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@multiplechain/tron": "^0.2.11",
-    "tronweb": "^5.3.2"
+    "tronweb": "^5.3.2",
+    "web3-utils": "^4.2.3"
   }
 }

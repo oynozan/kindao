@@ -51,6 +51,7 @@ declare module 'tronweb' {
             getTransaction(transactionID: any, callback?: any): Promise<any>;
             getConfirmedTransaction(transactionID: any, callback?: any): Promise<any>;
             getTransactionInfo(transactionID: any, callback?: any): Promise<any>;
+            getUnconfirmedTransactionInfo(transactionID: any, callback?: any): Promise<any>;
             getTransactionsToAddress(address: any, limit: number, offset: number, callback?: any): Promise<any>;
             getTransactionsFromAddress(address: any, limit: number, offset: number, callback?: any): Promise<any>;
             getTransactionsRelated(address: any, direction: any, limit: number, offset: number, callback?: any): Promise<any>;
@@ -90,6 +91,7 @@ declare module 'tronweb' {
             listExchangesPaginated(limit: number, offset: number, callback?: any): Promise<any>;
         }
         transactionBuilder: {
+            estimateEnergy(contractAddress: any, functionSelector: any, options: any, parameter: any, issuerAddress: any, callback?: any): Promise<any>;
             sendTrx(to: any, amount: any, from: any, callback?: any): Promise<any>;
             sendToken(to: any, amount: any, tokenID: any, from: any, callback?: any): Promise<any>;
             purchaseToken(issuerAddress: any, tokenID: any, amount: any, buyer: any, callback?: any): Promise<any>;
