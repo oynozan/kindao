@@ -30,7 +30,7 @@ export default function Header() {
                     type="blank"
                     items={[
                         <Link key={1} href="/">Facts</Link>,
-                        <Link key={2} href="/post">Publish</Link>,
+                        <Link key={2} href="/publish">Publish</Link>,
                         <Link key={3} href="/leaderboard">Leaderboard</Link>,
                         <Link key={5} href="/token">KDAO Token</Link>,
                     ]}

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FaCheck } from "react-icons/fa";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
 import { formatDate, truncateWalletAddress } from "@/lib/helpers";
@@ -34,7 +35,12 @@ export default function AnswerSection({
 
                 <div className="bottom">
                     <p className="date">{formatDate(date)}</p>
-                    <p className="author">{truncateWalletAddress(author)}</p>
+                    <Link
+                        href={`/profile/${author}`}
+                        className="author"
+                    >
+                        {truncateWalletAddress(author)}
+                    </Link>
                 </div>
             </div>
         </div>
