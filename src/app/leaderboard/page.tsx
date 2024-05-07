@@ -14,8 +14,8 @@ export default function Leaderboard() {
             <DataTable
                 columns={[
                     {
-                        name: "Address",
-                        selector: row => (row as Leaderboard).user,
+                        name: "Username",
+                        selector: row => (row as Leaderboard).username,
                     },
                     {
                         name: "Earning",
