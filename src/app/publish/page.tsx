@@ -57,7 +57,7 @@ export default function PublishProposal() {
             content: (
                 <div style={{ textAlign: "center" }}>
                     <Image
-                        src="loader.svg"
+                        src="/loader.svg"
                         alt="Loading"
                         width={100}
                         height={100}
@@ -87,11 +87,11 @@ export default function PublishProposal() {
                 return;
             }
     
-            createCustomModal("Please confirm publish proposal request in your wallet!");
+            createCustomModal("Please confirm the proposal request from your wallet.");
     
             const txHash = await kinDao.createProposal(title, description, bounty);
 
-            createCustomModal("Proposal published successfully! Waiting for confirmation...");
+            createCustomModal("Proposal is published successfully! Waiting for confirmation...");
 
             const proposalId = await kinDao.findProposalId(txHash);
 
@@ -102,7 +102,7 @@ export default function PublishProposal() {
             console.error(error);
             const message = String(error.message)
             if (!message.includes("Confirmation declined by user")) {
-                toast.error("Error while publishing proposal");
+                toast.error("An error occured while publishing proposal");
             }
             setModal("", {});
         }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaAward } from 'react-icons/fa';
+import Image from 'next/image';
 
 import { Proposal } from '@/lib/kindao';
 import { useTronStore } from '@/lib/states';
@@ -20,6 +21,7 @@ export default function PostComponent({ id } : { id: string }) {
         if (kinDao?.getProposals) {
             (async() => {
                 const proposal = await kinDao.getProposal(id);
+                console.log(proposal);
                 if (proposal) setProposal(proposal);
                 else router.push("/404");
             })()
@@ -28,6 +30,15 @@ export default function PostComponent({ id } : { id: string }) {
 
     return (
         <div id="post">
+            {!proposal && (
+                <Image
+                    src="/loader.svg"
+                    alt="Loading"
+                    width={50}
+                    height={50}
+                />
+            )}
+
             <div className="info">
                 <h1>{proposal?.title || ""}</h1>
                 <div className="bounty">{(proposal?.bounty || 0).toFixed(2)}<FaAward /></div>

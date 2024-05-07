@@ -1,10 +1,17 @@
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 
-import AnswerList from "@/components/Answers/AnswerList";
 import Write from "@/components/Answers/Write";
-import PostComponent from "@/components/Post";
 
 import './post.scss';
+
+const AnswerList = dynamic(() => import('@/components/Answers/AnswerList'), {
+    ssr: false
+});
+
+const PostComponent = dynamic(() => import('@/components/Post'), {
+    ssr: false
+});
 
 export default function ProposalPage({
     params

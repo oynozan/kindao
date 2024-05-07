@@ -30,7 +30,7 @@ export default function Modal({
                 </div>
                 {loading && (
                     <Image
-                        src="loader.svg"
+                        src="/loader.svg"
                         alt="Loading"
                         width={100}
                         height={100}
