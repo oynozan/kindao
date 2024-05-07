@@ -4,6 +4,7 @@
  */
 
 import Link from "next/link";
+import DOMPurify from "isomorphic-dompurify";
 import { FaCheck } from "react-icons/fa";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
 import { formatDate, truncateWalletAddress } from "@/lib/helpers";
@@ -39,7 +40,10 @@ export default function AnswerBox({
                 <div className="approval">{approved && (<FaCheck />)}</div>
             </div>
 
-            <p className="answer">{answer}</p>
+            <p
+                className="answer"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(answer || "") }}
+            ></p>
 
             <div className="bottom">
                 <p className="date">{formatDate(date)}</p>

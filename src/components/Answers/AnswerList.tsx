@@ -15,6 +15,7 @@ export default function AnswerList({ id } : { id: string }) {
         if (kinDao?.getFacts) {
             (async() => {
                 const facts = await kinDao.getFacts(id);
+                facts.forEach(fact => fact.createdAt *= 1000);
                 setFacts(facts?.length ? facts : []);
             })()
         }

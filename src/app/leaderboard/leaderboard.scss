@@ -3,6 +3,10 @@
         margin-top: 20px;
         font-size: 50px;
         text-align: center;
+
+        @include W(768px) {
+            font-size: 10vw;
+        }
     }
 
     p {

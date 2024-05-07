@@ -206,6 +206,7 @@
             border: 1px solid rgba(255, 255, 255, 0.86);
             margin-left: 40px;
             padding: 20px;
+            width: 100%;
 
             @include W(500px) {
                 margin-left: 0;

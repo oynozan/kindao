@@ -7,7 +7,7 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import DOMPurify from 'dompurify';
+import DOMPurify from "isomorphic-dompurify";
 
 const WalletHandler = dynamic(() => import('@/components/Header/WalletHandler'), {
     ssr: false
@@ -32,10 +32,13 @@ export default async function AnswerSection({
 }) {
 
     let isUp = true;
+
     const wallet = useTronStore(state => state.wallet);
     const kinDao = useTronStore(state => state.kinDao);
+
     const setLoading: (loading: boolean) => void = useModalStore(state => state.setLoading);
     const setModal: (type: string, options: any) => void = useModalStore(state => state.setModal);
+
     const [requested, setRequested] = useState(false);
     const [clicked, setClicked] = useState(false);
 
@@ -118,8 +121,10 @@ export default async function AnswerSection({
                 </div>
             </div>
             <div className="content">
-            <p className="answer" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(answer || "") }}></p>
-
+                <p
+                    className="answer"
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(answer || "") }}
+                ></p>
                 <div className="bottom">
                     <p className="date">{formatDate(date)}</p>
                     <Link

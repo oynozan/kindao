@@ -167,7 +167,7 @@ export class KinDAO {
     }
 
     async createProfile(username: string, avatarUrl: string = ''): Promise<string> {
-        if (!this.wallet) {
+        if (!this?.wallet) {
             throw new Error("Wallet not connected")
         }
         const result = await this.createTx("createProfile", username, avatarUrl);
@@ -380,11 +380,15 @@ export class KinDAO {
     }
 
     async getProfile(address: string): Promise<Profile> {
-        const profile = await this.contract.callMethod("getProfile", address);
+        let profile = await this.contract.callMethod("getProfile", address);
+
+        if (profile[0]) profile = profile[1];
+        else return {username: "", avatarUrl: "", earned: 0, owner: ""}
+
         return {
             username: profile.username,
             avatarUrl: profile.avatarUrl,
-            earned: utils.hexToNumber(profile.earned, 18),
+            earned: utils.hexToNumber((profile?.earned || 0), 18),
             owner: this.tronWeb.address.fromHex(profile.owner)
         };
     }

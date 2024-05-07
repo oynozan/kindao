@@ -1,11 +1,13 @@
 'use client'
 
+import { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
+
 import { Profile } from '@/lib/kindao';
+import { useTronStore } from '@/lib/states';
+import { truncateWalletAddress } from '@/lib/helpers';
 
 import './leaderboard.scss';
-import { useTronStore } from '@/lib/states';
-import { useEffect, useState } from 'react';
 
 export default function Leaderboard() {
 
@@ -38,7 +40,7 @@ export default function Leaderboard() {
                     },
                     {
                         name: "Go to Profile",
-                        cell: row => <a href={`/profile/${(row as Profile).owner}`}>Go to Profile</a>
+                        cell: row => <a href={`/profile/${(row as Profile).owner}`}>{truncateWalletAddress((row as Profile).owner)}</a>
                     }
                 ]}
                 data={profiles}

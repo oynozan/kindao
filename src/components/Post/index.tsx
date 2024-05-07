@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { Proposal } from '@/lib/kindao';
 import { useTronStore } from '@/lib/states';
 import { formatDate, truncateWalletAddress } from '@/lib/helpers';
-import DOMPurify from 'dompurify';
+import DOMPurify from "isomorphic-dompurify";
 
 export default function PostComponent({ id } : { id: string }) {
 
@@ -22,7 +22,10 @@ export default function PostComponent({ id } : { id: string }) {
         if (kinDao?.getProposals) {
             (async() => {
                 const proposal = await kinDao.getProposal(id);
-                if (proposal) setProposal(proposal);
+                if (proposal) {
+                    proposal.createdAt *= 1000;
+                    setProposal(proposal);
+                }
                 else router.push("/404");
             })()
         }
