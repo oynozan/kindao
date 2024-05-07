@@ -1,11 +1,26 @@
 'use client'
 
 import DataTable from 'react-data-table-component';
-import { leaderboard, type Leaderboard } from '@/data/dummy/leaderboard';
+import { Profile } from '@/lib/kindao';
 
 import './leaderboard.scss';
+import { useTronStore } from '@/lib/states';
+import { useEffect, useState } from 'react';
 
 export default function Leaderboard() {
+
+    const kinDao = useTronStore(state => state.kinDao);
+    const [profiles, setProfiles] = useState<Profile[]>([]);
+
+    useEffect(() => {
+        if (kinDao?.getProfiles) {
+            (async() => {
+                const profiles = await kinDao.getProfiles();
+                setProfiles(profiles?.length ? profiles : []);
+            })()
+        }
+    }, [kinDao])
+
     return (
         <div id="leaderboard">
             <h2>Leaderboard</h2>
@@ -15,14 +30,14 @@ export default function Leaderboard() {
                 columns={[
                     {
                         name: "Username",
-                        selector: row => (row as Leaderboard).username,
+                        selector: row => (row as Profile).username,
                     },
                     {
                         name: "Earning",
-                        selector: row => (row as Leaderboard).earned,
+                        selector: row => (row as Profile).earned,
                     },
                 ]}
-                data={leaderboard}
+                data={profiles}
             />
         </div>
     )
