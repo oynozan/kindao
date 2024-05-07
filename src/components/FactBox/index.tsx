@@ -4,6 +4,7 @@
  */
 
 import Link from "next/link";
+import DOMPurify from "isomorphic-dompurify";
 import { FaAward } from "react-icons/fa";
 import { formatDate, truncateWalletAddress } from "@/lib/helpers";
 
@@ -31,7 +32,7 @@ export default function FactBox({
                 <div className="bounty">{bounty.toFixed(2)}<FaAward /></div>
             </div>
 
-            <p>{description}</p>
+            <p dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(description || "") }}></p>
 
             <div className="bottom">
                 <p className="date">{formatDate(date)}</p>

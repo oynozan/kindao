@@ -3,13 +3,14 @@
 import './wallets.scss';
 import Image from 'next/image';
 import { KinDAO } from '@/lib/kindao';
-import { useTronStore, useModalStore } from '@/lib/states';
+import { useTronStore, useModalStore, useProfileStore } from '@/lib/states';
 import type { WalletAdapterInterface, WalletAdapterListType, WalletInterface } from '@multiplechain/types';
 
 type AfterConnectEvent = (wallet: WalletInterface) => void;
 
 export default function WalletHandler({ afterConnect } : { afterConnect?: AfterConnectEvent}) {
 
+    const setProfile: (i: { username: string, avatarUrl: string | null } | null) => void = useProfileStore(state => state.setProfile);
     const setModal: (type: string, options: any) => void = useModalStore(state => state.setModal);
     const setLoading: (loading: boolean) => void = useModalStore(state => state.setLoading);
 
@@ -26,12 +27,17 @@ export default function WalletHandler({ afterConnect } : { afterConnect?: AfterC
         await wallet.connect(provider, { projectId: '113d9f5689edd84ff230c2a6d679c80c' });
         const kinDao = new KinDAO(provider, wallet);
         await kinDao.setContract();
+
         setKinDao(kinDao);
         setWallet(wallet);
         setModal('', {});
         setLoading(false);
 
         if (afterConnect) afterConnect(wallet);
+
+        // Check profile
+        const profile = await kinDao.getProfile(await wallet.getAddress());
+        if (profile?.username) setProfile({ username: profile.username, avatarUrl: profile.avatarUrl });
     }
 
     const adapterTemplate = (adapter: WalletAdapterInterface) => {

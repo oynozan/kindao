@@ -2,7 +2,7 @@ import type { WalletInterface, ContractInterface } from '@multiplechain/types';
 import type * as TronType from '@/lib/tron/browser/index';
 import * as TronDefault from '@beycandeveloper/tron';
 import type TronWeb from 'tronweb';
-import { AbiCoder, N } from 'ethers';
+import { AbiCoder } from 'ethers';
 import abi from './abi.json';
 
 const Tron = TronDefault as typeof TronType;
@@ -28,6 +28,7 @@ export interface Profile {
     username: string;
     avatarUrl: string;
     earned: number;
+    owner: string;
 }
 
 export interface Proposal {
@@ -95,7 +96,7 @@ export class KinDAO {
 
     wallet?: WalletInterface;
 
-    address = "TBCeQ72Jmh9YuxXinhuHnQVx6ztCUyipeR";
+    address = "TUuaZwdK9pJTf5DQT2DAXecAGgyyK22B4p";
 
     tokenAddress = "TY9dAUUAvFVkSMjfFncnZnVyoFD59c7QY4";
 
@@ -166,7 +167,7 @@ export class KinDAO {
     }
 
     async createProfile(username: string, avatarUrl: string = ''): Promise<string> {
-        if (!this.wallet) {
+        if (!this?.wallet) {
             throw new Error("Wallet not connected")
         }
         const result = await this.createTx("createProfile", username, avatarUrl);
@@ -316,7 +317,8 @@ export class KinDAO {
         return profiles.map((profile: any) => ({
             username: profile.username,
             avatarUrl: profile.avatarUrl,
-            earned: utils.hexToNumber(profile.earned, 18)
+            earned: utils.hexToNumber(profile.earned, 18),
+            owner: this.tronWeb.address.fromHex(profile.owner)
         }));
     }
 
@@ -378,11 +380,16 @@ export class KinDAO {
     }
 
     async getProfile(address: string): Promise<Profile> {
-        const profile = await this.contract.callMethod("getProfile", address);
+        let profile = await this.contract.callMethod("getProfile", address);
+
+        if (profile[0]) profile = profile[1];
+        else return {username: "", avatarUrl: "", earned: 0, owner: ""}
+
         return {
             username: profile.username,
             avatarUrl: profile.avatarUrl,
-            earned: utils.hexToNumber(profile.earned, 18)
+            earned: utils.hexToNumber((profile?.earned || 0), 18),
+            owner: this.tronWeb.address.fromHex(profile.owner)
         };
     }
 

@@ -29,6 +29,16 @@ export const useTronStore = create<TronStore>((set) => ({
     setTron: (tron, provider) => set(() => ({ tron, provider })),
 }));
 
+interface ProfileStore {
+    profile: { username: string, avatarUrl: string | null } | null,
+    setProfile: (i: { username: string, avatarUrl: string | null } | null) => void
+}
+
+export const useProfileStore = create<ProfileStore>((set) => ({
+    profile: null,
+    setProfile: (profile) => set(() => ({ profile })),
+}));
+
 /* Content States */
 interface EditorStore {
     content: string;
