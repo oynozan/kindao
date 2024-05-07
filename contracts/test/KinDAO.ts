@@ -167,7 +167,7 @@ describe("KinDAO", () => {
         })
 
         it('Finalize proposal', async function () {
-            await contract.connect(owner).finalizeProposal(proposalId);
+            await contract.connect(owner).finalizeProposal(proposalId, factIds[0]);
             expect((await contract.getProposal(proposalId))[1][6]).to.be.true;
         })
 
@@ -201,7 +201,8 @@ describe("KinDAO", () => {
                 upVote,
                 downVote,
                 timeStamp,
-                creator
+                creator,
+                approved
             ] = result[1];
 
             expect(propId).to.be.equal(proposalId);
@@ -212,6 +213,7 @@ describe("KinDAO", () => {
             expect(downVote).to.be.equal(1);
             expect(timeStamp).to.be.an('bigint');
             expect(creator).to.be.equal(factCreator1.address);
+            expect(approved).to.be.true
         })
 
         it('Get vote', async function () {

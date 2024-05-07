@@ -1,60 +1,73 @@
+"use client"
+
 import { notFound } from "next/navigation";
 import { FaAward } from "react-icons/fa";
 
-import { questions } from "@/data/dummy/questions";
-import { answers as answer_data } from "@/data/dummy/answers";
 import { formatDate, truncateWalletAddress } from "@/lib/helpers";
 import AnswerSection from "@/components/Answers/Answer";
 import Write from "@/components/Answers/Write";
 
 import './post.scss';
+import { useTronStore } from '@/lib/states';
+import { useEffect, useState } from 'react';
+import { Fact, Proposal } from '@/lib/kindao';
 
-export default function PostLayout({
+export default function ProposalPage({
     params
 } : {
     params: { id: string }
 }) {
 
-    const postID = params.id;
+    const proposalId = params.id;
 
-    // Get the post via its ID
-    const post = questions.filter(q => q.id === postID)[0];
+    const kinDao = useTronStore(state => state.kinDao);
+    const [proposal, setProposal] = useState<Proposal | null>(null);
+    const [facts, setFacts] = useState<Fact[]>([]);
 
-    // Get answers
-    const answers = answer_data.filter(a => a.post === postID);
+    useEffect(() => {
+        console.log(proposalId);
+        (async() => {
+            const proposal = await kinDao.getProposal(proposalId);
+            console.log(proposal)
+            if (proposal)  {
+                setProposal(proposal);
+                setFacts(await kinDao.getFacts(proposalId));
+            }
+        })()
+    }, [])
 
-    if (!post) return notFound();
+    if (!proposal) return notFound();
 
     return (
         <div id="post-container">
             <div id="post">
                 <div className="info">
-                    <h1>{post.title}</h1>
-                    <div className="bounty">{post.bounty.toFixed(2)}<FaAward /></div>
+                    <h1>{proposal.title}</h1>
+                    <div className="bounty">{proposal.bounty.toFixed(2)}<FaAward /></div>
                 </div>
 
-                <p>{post.description}</p>
+                <p>{proposal.description}</p>
 
                 <div className="bottom">
-                    <p className="date">{formatDate(post.date)}</p>
-                    <p className="author">{truncateWalletAddress(post.author)}</p>
+                    <p className="date">{formatDate(new Date(proposal.createdAt))}</p>
+                    <p className="author">{truncateWalletAddress(proposal.creator)}</p>
                 </div>
             </div>
 
             {/* Answers */}
             <div id="answers">
                 <div className="list">
-                    { !answers?.length && (<p>No answers yet, be the first one!</p>) }
-                    { answers.map((answer, i) => {
+                    { !facts?.length && (<p>No answers yet, be the first one!</p>) }
+                    { facts.map((fact, i) => {
                         return (
                             <AnswerSection
                                 key={i}
-                                id={answer.id}
-                                answer={answer.content}
-                                author={answer.author}
-                                votes={answer.votes}
-                                approved={answer.approved}
-                                date={answer.date}
+                                id={fact.id}
+                                answer={fact.description}
+                                author={fact.creator}
+                                votes={5} // TODO: check it
+                                approved={fact.approved}
+                                date={new Date(fact.createdAt)}
                             />
                         )
                     }) }
@@ -62,7 +75,7 @@ export default function PostLayout({
             </div>
 
             <div className="write-answer">
-                <Write id={postID} />
+                <Write id={proposalId} />
             </div>
         </div>
     )

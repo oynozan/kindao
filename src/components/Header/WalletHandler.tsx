@@ -24,7 +24,7 @@ export default function WalletHandler({ afterConnect } : { afterConnect?: AfterC
 
         const wallet = new browser.Wallet(adapter, provider);
         await wallet.connect(provider, { projectId: '113d9f5689edd84ff230c2a6d679c80c' });
-        const kinDao = new KinDAO(wallet, provider);
+        const kinDao = new KinDAO(provider, wallet);
         await kinDao.setContract();
         setKinDao(kinDao);
         setWallet(wallet);
