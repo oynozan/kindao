@@ -16,9 +16,7 @@ export default function WalletHandler() {
 
     const connectWallet = async (adapter: WalletAdapterInterface): Promise<void> => {
         const wallet = new browser.Wallet(adapter, provider);
-        await wallet.connect(provider, {
-            projectId: '113d9f5689edd84ff230c2a6d679c80c'
-        });
+        await wallet.connect(provider, { projectId: '113d9f5689edd84ff230c2a6d679c80c' });
         const kinDao = new KinDAO(wallet, provider);
         await kinDao.setContract();
         setKinDao(kinDao);
@@ -81,7 +79,7 @@ export default function WalletHandler() {
         return order[valueA as keyof typeof order] - order[valueB as keyof typeof order];                     
     });
 
-    // set sorted adapters
+    // Set sorted adapters
     adapters = sortedKeys.reduce((sortedObj: WalletAdapterListType, key) => {
         sortedObj[key] = adapters[key];
         return sortedObj;
@@ -91,7 +89,9 @@ export default function WalletHandler() {
         <div className="wallet-list-wrapper">
             <div className="wallet-list-container">
                 {Object.values(adapters).map((adapter, index) => (
-                    adapterTemplate(adapter as WalletAdapterInterface)
+                    <div key={index}>
+                        {adapterTemplate(adapter as WalletAdapterInterface)}
+                    </div>
                 ))}
             </div>
         </div>
