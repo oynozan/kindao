@@ -9,15 +9,17 @@
     height: 100%;
     z-index: 999;
     background-color: rgba(0, 0, 0, 0.45);
+    @include glass;
 
     .modal-content {
-        background: #ffffff32;
+        background: #94949462;
         width: fit-content;
         height: fit-content;
         border-radius: 8px;
-        box-shadow: 0 0 10px 0 #11111125;
-        padding: 40px;
+        box-shadow: 0 0 10px 0 #11111175;
+        padding: 30px;
         max-width: 70vw;
+        @include glass;
 
         @include W(1650px) { max-width: 80vw; }
         @include W(1030px) { max-width: 90vw; }
@@ -39,16 +41,6 @@
             font-weight: 500;
             font-size: 15px;
             color: $light;
-            text-align: center;
-        }
-    
-        span {
-            display: block;
-            margin: 0 auto 8px auto;
-            width: 60%;
-            color: #54595E;
-            font-size: 15px;
-            opacity: .6;
             text-align: center;
         }
     
