@@ -25,6 +25,11 @@ export default function WalletHandler() {
     }
 
     const adapterTemplate = (adapter: WalletAdapterInterface) => {
+
+        const loader = document.querySelector('.loader')
+        if (loader) {
+            loader.remove();
+        }
     
         const statuses = {
             universal:       <span key={1}></span>,
@@ -57,6 +62,13 @@ export default function WalletHandler() {
                 className="wallet-adapter"
                 onClick={() => connectWallet(adapter)}
             >
+                <Image
+                    src={adapter.icon}
+                    alt={adapter.id}
+                    width={50}
+                    height={50}
+                    className="icon"
+                />
                 <span className="name">{adapter.name}</span>
                 <span className="status">{getStatus()}</span>
             </div>
@@ -82,9 +94,7 @@ export default function WalletHandler() {
         <div className="wallet-list-wrapper">
             <div className="wallet-list-container">
                 {Object.values(adapters).map((adapter, index) => (
-                    <div key={index}>
-                        {adapterTemplate(adapter as WalletAdapterInterface)}
-                    </div>
+                    adapterTemplate(adapter as WalletAdapterInterface)
                 ))}
             </div>
         </div>
