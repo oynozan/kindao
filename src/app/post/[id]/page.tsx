@@ -1,5 +1,6 @@
-import { notFound } from "next/navigation";
+import Link from "next/link";
 import { FaAward } from "react-icons/fa";
+import { notFound } from "next/navigation";
 
 import { questions } from "@/data/dummy/questions";
 import { answers as answer_data } from "@/data/dummy/answers";
@@ -37,7 +38,12 @@ export default function PostLayout({
 
                 <div className="bottom">
                     <p className="date">{formatDate(post.date)}</p>
-                    <p className="author">{truncateWalletAddress(post.author)}</p>
+                    <Link
+                        href={`/profile/${post.author}`}
+                        className="author"
+                    >
+                        {truncateWalletAddress(post.author)}
+                    </Link>
                 </div>
             </div>
 

@@ -1,6 +1,5 @@
 'use client'
 
-import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import type { WalletInterface } from "@multiplechain/types";

@@ -36,6 +36,10 @@
     padding: 30px;
     font-size: 19px;
 
+    @include W(1400px) {
+        width: 90%;
+    }
+
     @include W(1000px) {
         width: 100%;
     }
@@ -96,6 +100,10 @@
     margin-left: 50px;
     margin-top: 40px;
     border-left: 2px rgba(255, 255, 255, 0.17) dashed;
+
+    @include W(1400px) {
+        width: 90%;
+    }
 
     @include W(1000px) {
         width: 100%;
