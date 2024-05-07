@@ -83,7 +83,7 @@ export class KinDAO {
 
     address = "TNSMH37nhxsNMXZaqr3dGTEH6FyUffzoY6";
 
-    tokanAddress = "TY9dAUUAvFVkSMjfFncnZnVyoFD59c7QY4";
+    tokenAddress = "TY9dAUUAvFVkSMjfFncnZnVyoFD59c7QY4";
 
     setContract: () => Promise<void>;
 
@@ -100,7 +100,7 @@ export class KinDAO {
         this.provider = provider ?? TronDefault.Provider.instance
         this.tronWeb = this.provider.tronWeb
         this.contract = new TronDefault.assets.Contract(this.address, this.provider, abi)
-        this.token = new TronDefault.assets.Token(this.tokanAddress, this.provider, undefined)
+        this.token = new TronDefault.assets.Token(this.tokenAddress, this.provider, undefined)
         this.setContract = async () => {
             await this.contract.setTronContract()
             this.tronContract = this.contract.tronContract
