@@ -36,6 +36,10 @@ export default function Leaderboard() {
                         name: "Earning",
                         selector: row => (row as Profile).earned,
                     },
+                    {
+                        name: "Go to Profile",
+                        cell: row => <a href={`/profile/${(row as Profile).owner}`}>Go to Profile</a>
+                    }
                 ]}
                 data={profiles}
             />

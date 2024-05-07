@@ -635,6 +635,11 @@
 						"internalType": "uint256",
 						"name": "earned",
 						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
 					}
 				],
 				"internalType": "struct KinDAO.Profile",
@@ -676,6 +681,11 @@
 						"internalType": "uint256",
 						"name": "earned",
 						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
 					}
 				],
 				"internalType": "struct KinDAO.Profile[]",
