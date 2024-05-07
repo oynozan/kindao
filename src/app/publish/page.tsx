@@ -33,13 +33,9 @@ export default function PublishProposal() {
     const [title, setTitle] = useState<string>("");
     const [bounty, setBounty] = useState<number>(100);
 
-    const keepGoingToPublish = () => {
-        publish(...Object.values(publishArgs) as [string, string, number]);
-    }
-
     useEffect(() => {
         if (wallet) {
-            keepGoingToPublish()
+            publish(...Object.values(publishArgs) as [string, string, number]);
         }
     }, [wallet])
 

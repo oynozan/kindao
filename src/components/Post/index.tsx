@@ -21,7 +21,6 @@ export default function PostComponent({ id } : { id: string }) {
         if (kinDao?.getProposals) {
             (async() => {
                 const proposal = await kinDao.getProposal(id);
-                console.log(proposal);
                 if (proposal) setProposal(proposal);
                 else router.push("/404");
             })()
@@ -41,7 +40,7 @@ export default function PostComponent({ id } : { id: string }) {
 
             <div className="info">
                 <h1>{proposal?.title || ""}</h1>
-                <div className="bounty">{(proposal?.bounty || 0).toFixed(2)}<FaAward /></div>
+                <div className="bounty">{(proposal?.bounty || 0).toFixed(2)} KDAO <FaAward /></div>
             </div>
 
             <p dangerouslySetInnerHTML={{ __html: proposal?.description || "" }}></p>

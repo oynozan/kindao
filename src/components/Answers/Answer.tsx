@@ -31,7 +31,7 @@ export default function AnswerSection({
                 </div>
             </div>
             <div className="content">
-                <p className="answer">{answer}</p>
+                <p className="answer" dangerouslySetInnerHTML={{ __html: answer || "" }}></p>
 
                 <div className="bottom">
                     <p className="date">{formatDate(date)}</p>

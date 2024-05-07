@@ -25,7 +25,7 @@ export default function AnswerList({ id } : { id: string }) {
             { !facts?.length && (
                 <>
                     <br />
-                    <p>No answers yet, be the first one!</p>
+                    <p>No fact yet, be the first one!</p>
                     <br />
                 </>
             )}
@@ -34,9 +34,9 @@ export default function AnswerList({ id } : { id: string }) {
                     <AnswerSection
                         key={i}
                         id={fact.id}
-                        answer={fact.description}
+                        answer={fact.title}
                         author={fact.creator}
-                        votes={5} // TODO: check it
+                        votes={fact.voteUp - fact.voteDown}
                         approved={fact.approved}
                         date={new Date(fact.createdAt)}
                     />
