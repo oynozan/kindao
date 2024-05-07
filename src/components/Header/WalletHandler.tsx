@@ -57,13 +57,6 @@ export default function WalletHandler() {
                 className="wallet-adapter"
                 onClick={() => connectWallet(adapter)}
             >
-                <Image
-                    src={adapter.icon}
-                    alt={adapter.id}
-                    width={50}
-                    height={50}
-                    className="icon"
-                />
                 <span className="name">{adapter.name}</span>
                 <span className="status">{getStatus()}</span>
             </div>
