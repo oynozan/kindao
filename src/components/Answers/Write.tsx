@@ -54,26 +54,35 @@ export default function Write({ id } : { id: string }) {
     }
 
     const send = async () => {
-        if (!content) {
-            toast.error("Please enter a fact");
-        }
-
-        if (!wallet) {
-            openWalletModal();
-            return;
-        }
-
-        createCustomModal("Please confirm the fact request from your wallet.");
-
-        const txHash = await kinDao.createFact(id, content, '', '');
+        try {
+            if (!content) {
+                toast.error("Please enter a fact");
+            }
     
-        createCustomModal("Fact is published successfully! Waiting for confirmation...");
-
-        await kinDao.findFactId(txHash);
-
-        window.location.reload();
-
-        setModal("", {});
+            if (!wallet) {
+                openWalletModal();
+                return;
+            }
+    
+            createCustomModal("Please confirm the fact request from your wallet.");
+    
+            const txHash = await kinDao.createFact(id, content, '', '');
+        
+            createCustomModal("Fact is published successfully! Waiting for confirmation...");
+    
+            await kinDao.findFactId(txHash);
+    
+            window.location.reload();
+    
+            setModal("", {});
+        } catch (error:any) {
+            console.error(error);
+            const message = String(error.message)
+            if (!message.includes("Confirmation declined by user")) {
+                toast.error("An error occured while publishing proposal");
+            }
+            setModal("", {});
+        }
     }
 
     return (

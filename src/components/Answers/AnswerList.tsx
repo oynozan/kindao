@@ -33,7 +33,8 @@ export default function AnswerList({ id } : { id: string }) {
                 return (
                     <AnswerSection
                         key={i}
-                        id={fact.id}
+                        proposalId={id}
+                        factId={fact.id}
                         answer={fact.title}
                         author={fact.creator}
                         votes={fact.voteUp - fact.voteDown}

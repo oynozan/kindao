@@ -277,6 +277,15 @@ export class KinDAO {
         const decoded = AbiCoder.defaultAbiCoder().decode(["string", "string"], "0x" + log.data);
         return decoded[1];
     }
+    
+    async waitTransaction(txHash: string): Promise<void> {
+        const tx = await this.tronWeb.trx.getUnconfirmedTransactionInfo(txHash);
+        if (!tx.log) {
+            await sleep(4000);
+            return this.waitTransaction(txHash);
+        }
+        return;
+    }
 
     async voteFact(proposalId: string, factId: string, isUp: boolean): Promise<string> {
         if (!this.wallet) {
